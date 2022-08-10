@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PatikaBitirme_EticaretApp.Controllers
+namespace PatikaBitirme_EticaretAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

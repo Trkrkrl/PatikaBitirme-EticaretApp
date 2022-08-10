@@ -1,6 +1,6 @@
 using System;
 
-namespace PatikaBitirme_EticaretApp
+namespace PatikaBitirme_EticaretAPI
 {
     public class WeatherForecast
     {

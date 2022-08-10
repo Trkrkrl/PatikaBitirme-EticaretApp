@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PatikaBitirme_EticaretApp
+namespace PatikaBitirme_EticaretAPI
 {
     public class Startup
     {
