@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Aspects\Autofac\" />
+    <Folder Include="CrossCuttingConcerns\" />
+    <Folder Include="DataAccess\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="DependencyResolvers\" />
+    <Folder Include="Utilities\Messages\" />
+    <Folder Include="Utilities\Interceptors\" />
+    <Folder Include="Utilities\IoC\" />
+    <Folder Include="Utilities\Security\" />
+    <Folder Include="Utilities\Results\" />
+  </ItemGroup>
+
+</Project>
