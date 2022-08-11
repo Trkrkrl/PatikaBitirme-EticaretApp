@@ -8,7 +8,6 @@
     <Folder Include="Aspects\Autofac\" />
     <Folder Include="CrossCuttingConcerns\" />
     <Folder Include="Utilities\Messages\" />
-    <Folder Include="Utilities\Results\" />
   </ItemGroup>
 
   <ItemGroup>
