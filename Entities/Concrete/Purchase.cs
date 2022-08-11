@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Concrete
 {
-    public class Order : IEntity
+    public class Purchase : IEntity
     {
         public int OrderId { get; set; }
         public string UserId { get; set; }//satınalan kişi
