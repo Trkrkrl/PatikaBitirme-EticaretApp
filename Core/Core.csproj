@@ -8,7 +8,6 @@
     <Folder Include="Aspects\Autofac\" />
     <Folder Include="CrossCuttingConcerns\" />
     <Folder Include="DataAccess\" />
-    <Folder Include="Entities\" />
     <Folder Include="Extensions\" />
     <Folder Include="DependencyResolvers\" />
     <Folder Include="Utilities\Messages\" />

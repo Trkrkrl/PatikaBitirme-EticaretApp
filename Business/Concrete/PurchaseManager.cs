@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class UserManager:IUserService
-    {
+    public class PurchaseManager:IPurchaseService
+    {/*ilgili ürün satın alınınca isSold durumunu =>True yap
+      * 
+      * 
+      * 
+      *
+      */
     }
 }

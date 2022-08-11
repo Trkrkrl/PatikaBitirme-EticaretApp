@@ -1,13 +1,12 @@
-﻿using Business.Abstract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Concrete
+namespace Business.Abstract
 {
-    public class UserManager:IUserService
+    public interface IPurchaseService
     {
     }
 }
