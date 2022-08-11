@@ -7,7 +7,6 @@
   <ItemGroup>
     <Folder Include="Aspects\Autofac\" />
     <Folder Include="CrossCuttingConcerns\" />
-    <Folder Include="DataAccess\" />
     <Folder Include="Extensions\" />
     <Folder Include="DependencyResolvers\" />
     <Folder Include="Utilities\Messages\" />
@@ -15,6 +14,10 @@
     <Folder Include="Utilities\IoC\" />
     <Folder Include="Utilities\Security\" />
     <Folder Include="Utilities\Results\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
   </ItemGroup>
 
 </Project>
