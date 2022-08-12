@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,13 @@ namespace Business.Constants
 {
     public class Messages
     {
+        public static string UserRegistered = "Kullanıcı kaydedildi";
+        public static string AccessTokenCreated = "AccessToken Oluşturuldu";
+
+        public static string SuccessfulLogin = "Login Başarılı";
+        public static string PasswordError = "Parola Hatası";
+        public static string UserNotFound = "Kullanıcı Bulunamadı";
+
+        public static string UserDeleted = "Kullanıcı Silindi";
     }
 }
