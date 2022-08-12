@@ -19,5 +19,9 @@ namespace Entities.DTOs
         public bool IsSold { get; set; }
         //--
         public List<string> ImagePath { get; set; }
+        public string Description { get; set; }
+        public int ColorId { get; set; }
+        public string CategoryName { get; set; }
+        public string ColorName { get; set; }
     }
 }

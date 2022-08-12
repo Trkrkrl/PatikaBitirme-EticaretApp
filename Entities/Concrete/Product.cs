@@ -18,6 +18,7 @@ namespace Entities.Concrete
         public bool IsOfferable { get; set; }
         public bool IsSold { get; set; }
         public string Description { get; set; }
+        public int ColorId { get; set; }
 
     }
 }

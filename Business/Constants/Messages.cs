@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +22,21 @@ namespace Business.Constants
         public static string CategoriesListed = "Kategoriler Listelendi";
         public static string CategoryAdded = "Kategori Eklendi ";
         public static string CategoryDeleted = "Kategori Silindi ";
+
+        public static string ColorsListed = "Renkler Listelendi ";
+
+        public static string ColorDeleted = "Renk Silindi ";
+        public static string ColorAdded = "Renk Eklendi ";
+
+        public static string ProductAdded = "Ürün Eklendi ";
+
+        public static string ProductDeleted = "Ürün Silindi ";
+
+        public static string ProductUpdated = "Ürün Güncellendi ";
+
+        public static string ProductsListed = "Ürünler Listelendi ";
+
+        public static string CategoryDoesntExist = "Böyle Bir Kategori Bulunamadı ";
+        public static string ColorDoesntExist = "Böyle Bir Renk Bulunamadı ";
     }
 }
