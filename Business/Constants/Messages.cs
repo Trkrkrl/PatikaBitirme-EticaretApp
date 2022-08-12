@@ -17,5 +17,9 @@ namespace Business.Constants
         public static string UserNotFound = "Kullanıcı Bulunamadı";
 
         public static string UserDeleted = "Kullanıcı Silindi";
+
+        public static string CategoriesListed = "Kategoriler Listelendi";
+        public static string CategoryAdded = "Kategori Eklendi ";
+        public static string CategoryDeleted = "Kategori Silindi ";
     }
 }
