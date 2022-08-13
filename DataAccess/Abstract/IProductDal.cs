@@ -12,6 +12,7 @@ namespace DataAccess.Abstract
     public interface IProductDal:IBaseRepository<Product>
     {
         List<ProductDetailDto> GetAllProductsDetails();
-        List<ProductDetailDto> GetProductDetails(int productId);
+        List<ProductDetailDto> GetProductsBySellerId(int sellerId);
+
     }
 }

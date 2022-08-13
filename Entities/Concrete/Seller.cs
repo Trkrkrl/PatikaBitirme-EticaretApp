@@ -13,7 +13,8 @@ namespace Entities.Concrete
         [Key]
         public int SellerId { get; set; }
         public int UserId { get; set; }
-        
+        public string  SellerName { get; set; }
+
 
     }
 }

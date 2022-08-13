@@ -38,5 +38,18 @@ namespace Business.Constants
 
         public static string CategoryDoesntExist = "Böyle Bir Kategori Bulunamadı ";
         public static string ColorDoesntExist = "Böyle Bir Renk Bulunamadı ";
+
+        public static string OfferSent = "Teklifiniz Gönderildi ";
+        public static string OfferDeleted = "TeklifiniziBaşarıyla Geri Çektiniz/Sildiniz  ";
+
+        public static string OfferUpdated = "Teklifiniz Başarıyla Güncellendi";
+
+        public static string ProductIsNotOfferable = "Bu ürüne teklif yapılamaz";
+
+        public static string OfferIsPending = "Bu ürüne yapılmış ve aktif olan bir teklifiniz mevcut";
+
+        public static string OfferIsAccepted2 = "Bu ürüne yapmış olduğunuz teklif kabul edilmiş. Siparişlerim sayfasından iptal edebilirsiniz";
+
+        public static string OfferIsAccepted3 = "Bu ürüne yapmış olduğunuz teklif kabul edilmiş. Siparişlerim sayfasından iptal edebilirsiniz";
     }
 }

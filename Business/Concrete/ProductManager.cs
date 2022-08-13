@@ -30,7 +30,7 @@ namespace Business.Concrete
                 CheckIfCategoryEntryIsValid(product.CategoryId), sadece bir tane id bi girildi
                 CheckIfColorEntryIsValid(product.ColorId)
 
-
+        satıştaki ürünlerimi getirmesi için get by seller Id
       *          
        */
 
@@ -116,14 +116,32 @@ namespace Business.Concrete
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
         }
 
-        public IDataResult<List<Product>> GetByUnitPrice(decimal min, decimal max)
+        public IDataResult<List<Product>> GetByUnitPrice(double min, double max)
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));
+        }
+        public IDataResult<List<ProductDetailDto>> GetProductsBySellerId(int sellerId)
+        {
+            return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductsBySellerId(sellerId));//bu metod şüpheli mutlaka testet
+        }
+        public IResult CheckOfferable(int productId)
+        {
+            var specimen = _productDal.Get(p => p.ProductId == productId);
+            bool result = specimen.IsOfferable;
+            ;
+
+            return new Result(result);
+        }
+        public double GetProductPriceById(int productId)
+        {
+            var specimen = _productDal.Get(p => p.ProductId == productId);
+            var result = specimen.UnitPrice;
+            return  result;
         }
 
         //-- kurallar
 
-        
+
         private IResult CheckIfCategoryIdExist(int categoryId)//Id girdin den böyle bir id varmı
         {
             var result = _productDal.GetAll(p => p.CategoryId== categoryId).Any();
@@ -144,7 +162,6 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-
-
+        
     }
 }

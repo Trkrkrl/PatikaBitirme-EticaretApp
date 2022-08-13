@@ -13,12 +13,13 @@ namespace Entities.Concrete
         public int CategoryId { get; set; }
         public string ProductName { get; set; }
         public short UnitsInStock { get; set; }
-        public decimal UnitPrice { get; set; }
+        public double UnitPrice { get; set; }
         public string Status { get; set; } = "Sıfır";//kullanılmış, sıfır, az kullanılmış gibi
         public bool IsOfferable { get; set; }
         public bool IsSold { get; set; }
         public string Description { get; set; }
         public int ColorId { get; set; }
+        public int SellerId { get; set; }
 
     }
 }

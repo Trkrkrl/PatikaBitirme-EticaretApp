@@ -30,9 +30,9 @@ namespace PatikaBitirme_EticaretApp.Controllers
         }
 
         [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById(int productId)
         {
-            var result = _productService.GetById(id);
+            var result = _productService.GetById(productId);
             if (result.Success)
             {
                 return Ok(result);
@@ -86,5 +86,19 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+        //-
+        [HttpGet("getbysellerid")]
+        public IActionResult GetBySellerId(int userId)
+        {
+            //burada userin seller id bilgisine erişmeliyim-burası da authorized olmalı--veya user girer direkt-veya claimsten alırım
+            var result = _productService.GetProductsBySellerId(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
     }
 }

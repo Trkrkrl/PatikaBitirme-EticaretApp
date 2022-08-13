@@ -10,10 +10,12 @@ namespace Entities.Concrete
     public class Offer : IEntity
     {
         public int OfferId { get; set; }
-        public double OfferPercentage { get; set; } = 100;
-        public int OfferAmount { get; set; }
+        public double OfferPercentage { get; set; } = 0;
+        public int OfferAmount { get; set; } = 0;
         public int ProductId { get; set; }
         public string Status { get; set; } = "Pending";//Teklif Kabul ve red durumuna göre
+        public int SenderUserId { get; set; }
+        public int ReceiverUserId { get; set; }
 
 
     }

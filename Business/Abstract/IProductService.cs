@@ -13,13 +13,15 @@ namespace Business.Abstract
     {
         IDataResult<List<Product>> GetAll();
         IDataResult<List<Product>> GetAllByCategoryId(int categoryId);
-        IDataResult<List<Product>> GetByUnitPrice(decimal min, decimal max);
+        IDataResult<List<Product>> GetByUnitPrice(double min, double max);
        // IDataResult<List<ProductDetailDto>> GetProductDetails(int productId);
         IDataResult<List<ProductDetailDto>> GetAllProductsDetails();
         IDataResult<Product> GetById(int productId);
         IResult Add(Product product);
         IResult Delete(Product product);
         IResult Update(Product product);
-        
+        IDataResult<List<ProductDetailDto>> GetProductsBySellerId(int sellerId);
+        IResult CheckOfferable(int productId);
+        double GetProductPriceById(int productId);
     }
 }

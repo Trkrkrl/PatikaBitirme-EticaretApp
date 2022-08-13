@@ -23,5 +23,7 @@ namespace Entities.DTOs
         public int ColorId { get; set; }
         public string CategoryName { get; set; }
         public string ColorName { get; set; }
+        public int SellerId { get; set; }
+        public string  SellerName { get; set; }
     }
 }
