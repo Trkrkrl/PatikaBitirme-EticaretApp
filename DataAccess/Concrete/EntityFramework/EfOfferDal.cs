@@ -33,7 +33,7 @@ namespace DataAccess.Concrete.EntityFramework
                                      OfferAmount=of.OfferAmount,
 
                                      ProductId=of.ProductId,
-                                     Status=of.Status,
+                                     offerStatus = of.offerStatus,
 
                                      SenderUserId=of.SenderUserId,
                                      SenderFirstName= buyus.FirstName,

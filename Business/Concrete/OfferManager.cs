@@ -146,7 +146,7 @@ namespace Business.Concrete
         //kural 1 teklif yaptığı teklifleri listesini getir ve içerisinede bu ürüne yapılmış teklif varmı ve bu teklif - on pending mi
         private IResult CheckIfUserMadeOfferBefore(int senderUserId,int productId)
         {
-            var result = _offerDal.GetAll(o => o.SenderUserId==senderUserId && o.ProductId==productId && o.Status=="pending").Any();//bu kişinin-bu ürüne- beklemede olan teklifi varmı
+            var result = _offerDal.GetAll(o => o.SenderUserId==senderUserId && o.ProductId==productId && o.offerStatus=="pending").Any();//bu kişinin-bu ürüne- beklemede olan teklifi varmı
             if (!result)
             {
                 return new SuccessResult();
@@ -159,7 +159,7 @@ namespace Business.Concrete
         private IResult CheckIfOfferIsCancellable(int offerId)
         {
             //yaptığı teklif kabul edilmiş mi
-            var result = _offerDal.GetAll(o => o.OfferId == offerId &&  o.Status == "accepted").Any();
+            var result = _offerDal.GetAll(o => o.OfferId == offerId &&  o.offerStatus == "accepted").Any();
             if (!result)
             {
                 return new SuccessResult();
@@ -172,7 +172,7 @@ namespace Business.Concrete
         private IResult CheckIfOfferIsUpdatable(int offerId)
         {
             //yaptığı teklif kabul edilmiş mi
-            var result = _offerDal.GetAll(o => o.OfferId == offerId && o.Status == "accepted").Any();
+            var result = _offerDal.GetAll(o => o.OfferId == offerId && o.offerStatus == "accepted").Any();
             if (!result)
             {
                 return new SuccessResult();

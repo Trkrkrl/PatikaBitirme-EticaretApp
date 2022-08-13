@@ -13,7 +13,7 @@ namespace Entities.Concrete
         public double OfferPercentage { get; set; } = 0;
         public int OfferAmount { get; set; } = 0;
         public int ProductId { get; set; }
-        public string Status { get; set; } = "Pending";//Teklif Kabul ve red durumuna göre
+        public string offerStatus { get; set; } = "Pending";//Teklif Kabul ve red durumuna göre
         public int SenderUserId { get; set; }
         public int ReceiverUserId { get; set; }
 

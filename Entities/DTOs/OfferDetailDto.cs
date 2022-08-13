@@ -13,7 +13,7 @@ namespace Entities.DTOs
         public double OfferPercentage { get; set; }
         public int OfferAmount { get; set; }
         public int ProductId { get; set; }
-        public string Status { get; set; }
+        public string offerStatus { get; set; }//bu productun statusu buna elleşme
         //--
         public int SenderUserId { get; set; }
         public string SenderFirstName { get; set; }

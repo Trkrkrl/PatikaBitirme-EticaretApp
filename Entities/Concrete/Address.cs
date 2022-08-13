@@ -19,7 +19,7 @@ namespace Entities.Concrete
         public int BuildingNo { get; set; }
 
         public int ApartmentNo { get; set; }
-
+        public int UserId { get; set; }
 
     }
 }

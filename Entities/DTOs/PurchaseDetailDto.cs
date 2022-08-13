@@ -1,13 +1,13 @@
-﻿using Core.Entities;
+﻿using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.Concrete
+namespace Entities.DTOs
 {
-    public class Purchase : IEntity
+    public class PurchaseDetailDto
     {
         public int PurchaseId { get; set; }
         public int UserId { get; set; }//satınalan kişi
@@ -15,6 +15,14 @@ namespace Entities.Concrete
         public DateTime OrderDate { get; set; }
         public int AdressId { get; set; }
         public int TotalAmount { get; set; }//ürün satınalma fiyatı
+        //--
+        public string  BuyerFirstName { get; set; }
+        public string BuyerLastName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        
+        public Address DeliveryAdress { get; set; }
         public int ProductId { get; set; }
+        public string ProductName { get; set; }
     }
 }

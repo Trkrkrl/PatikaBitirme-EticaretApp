@@ -51,5 +51,15 @@ namespace Business.Constants
         public static string OfferIsAccepted2 = "Bu ürüne yapmış olduğunuz teklif kabul edilmiş. Siparişlerim sayfasından iptal edebilirsiniz";
 
         public static string OfferIsAccepted3 = "Bu ürüne yapmış olduğunuz teklif kabul edilmiş. Siparişlerim sayfasından iptal edebilirsiniz";
+
+        public static string PurchaseAdded = "Siparişiniz eklendi";
+
+        public static string PurchaseCanceled = "Siparişiniz silindi/iptal edildi";
+
+        public static string PurchasesListed = "Tüm siparişler Listelendi";
+
+        public static string PurchasesListed2 = "Tüm siparişleriniz Listelendi";
+
+        public static string PurchasesListed3 = "Siarpiş detayları getirildi";
     }
 }
