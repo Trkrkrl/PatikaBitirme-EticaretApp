@@ -20,14 +20,21 @@ namespace Business.Concrete
       *
       */
         private readonly IPurchaseDal _purchaseDal;
+        private readonly IProductService _productService;
+        private readonly IAddressService _addressService;
+        
 
-        public PurchaseManager(IPurchaseDal purchaseDal)
+        public PurchaseManager(IPurchaseDal purchaseDal, IProductService productService,IAddressService adressService)
         {
             _purchaseDal = purchaseDal;
+            _productService = productService;
+            _addressService = adressService;
         }
 
         public IResult Add(Purchase purchase)
-        {
+        {//
+
+
             _purchaseDal.Add(purchase);
             return new SuccessResult(Messages.PurchaseAdded);
         }
@@ -52,6 +59,26 @@ namespace Business.Concrete
         public DataResult< List<PurchaseDetailDto>> GetByDetailsByPurchaseId(int purchaseId)
         {
             return new SuccessDataResult<List<PurchaseDetailDto>>(_purchaseDal.GetByDetailsByPurchaseId(purchaseId), Messages.PurchasesListed3);
+        }
+        public IResult AddFromOffers(Offer offer)
+        {//
+            IDataResult<Address> addressResult = _addressService.GetByUserId(offer.SenderUserId);
+            int usersFirstAddressId = addressResult.Data.AddressId;
+
+            Purchase purchase = new Purchase()
+            {
+                ProductId = offer.ProductId,
+                SellerId=offer.ReceiverUserId,
+                OrderDate=DateTime.Now,
+                TotalAmount=offer.OfferAmount,
+                UserId=offer.SenderUserId,
+                AdressId=usersFirstAddressId
+
+            };
+
+
+            _purchaseDal.Add(purchase);
+            return new SuccessResult(Messages.PurchaseFromOfferAdded);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Business.Abstract
         IDataResult<List<Offer>> GetSentByCustomerId(int customerUserId);
         IDataResult<List<Offer>> GetAll();
         IDataResult<List<OfferDetailDto>> GetOfferDetailsByOfferId(int offerId);
+        IResult AcceptOffer(Offer offer);   
 
 
 

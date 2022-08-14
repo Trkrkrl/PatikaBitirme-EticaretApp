@@ -29,11 +29,12 @@ namespace Business.Concrete
       */
         private readonly IOfferDal _offerDal;
         private readonly IProductService _productService;
-
-        public OfferManager(IOfferDal offerDal,IProductService  productService)
+        private readonly IPurchaseService _purchaseService;
+        public OfferManager(IOfferDal offerDal,IProductService  productService,IPurchaseService purchaseService)
         {
             _offerDal = offerDal;
             _productService = productService;
+            _purchaseService = purchaseService;
         }
         //add(make), delete, update, getall, getsentoffersbyuserid,getreceivedoffersbyuserid,
         //offer detaildtoda gönderen ve alıcı detayını ekledim
@@ -71,9 +72,19 @@ namespace Business.Concrete
                 {
                     return result;
                 }
+                if(offer.OfferPercentage == 100)
+                {
+                offer.offerStatus = "accepted";
+                _purchaseService.AddFromOffers(offer);
+                return new SuccessResult(Messages.OfferAcceptedAndReliedToPurchase);
+                }
+                else
+                {
+                    _offerDal.Add(offer);
+                    return new SuccessResult(Messages.OfferSent);
+                }
 
-            _offerDal.Add(offer);
-            return new SuccessResult(Messages.OfferSent);//aynı ürüne offer yaptıysa kontrolü yap-eğer yaptıysa  offer update e yönelt
+            
         }
         public IResult Delete(Offer offer)//teklifi geri almak amacıyla gönderen kişi tarafından silinebilmeli
         {
@@ -136,6 +147,11 @@ namespace Business.Concrete
         public IDataResult<List<OfferDetailDto>> GetOfferDetailsByOfferId(int offerId)
         {
            return new SuccessDataResult<List<OfferDetailDto>> (_offerDal.GetOfferDetails(offerId));
+        }
+        public IResult AcceptOffer (Offer offer)
+        {
+            _purchaseService.AddFromOffers(offer);
+            return new SuccessResult(Messages.OfferAccepted);
         }
 
 

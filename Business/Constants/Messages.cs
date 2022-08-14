@@ -60,6 +60,18 @@ namespace Business.Constants
 
         public static string PurchasesListed2 = "Tüm siparişleriniz Listelendi";
 
-        public static string PurchasesListed3 = "Siarpiş detayları getirildi";
+        public static string PurchasesListed3 = "Sipariş detayları getirildi";
+
+        public static string AddressAdded = "Adresiniz başarıyla eklendi";
+
+        public static string AddressDeleted = "Adresiniz başarıyla silindi";
+
+        public static string AddressUpdated = "Adresiniz başarıyla güncellendi";
+
+        public static string PurchaseFromOfferAdded = "Tekliften yönlendirilen siparişiniz başşarıyla eklendi ";
+
+        public static string OfferAccepted = "Teklif başarıyla kabul edildi";
+
+        public static string OfferAcceptedAndReliedToPurchase = "Teklifiniz tam fiyat üzerinden olduğundan  kabul edildi ve satınalmaya yönlendirildi";
     }
 }

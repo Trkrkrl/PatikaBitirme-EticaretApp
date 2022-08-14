@@ -92,6 +92,17 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [HttpPost("acceptoffer")]
+        public IActionResult AcceptOffer(Offer offer)
+        {
+            var result = _offerService.AcceptOffer(offer);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
 
 
     }

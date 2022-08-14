@@ -16,6 +16,7 @@ namespace Business.Abstract
         DataResult<List<PurchaseDetailDto>> GetByDetailsByPurchaseId(int purchaseId);
         DataResult<List<Purchase>> GetByCustomerUserId(int userId);
         DataResult<List<Purchase>> GetAll();
+        IResult AddFromOffers(Offer offer);
         
     }
 }
