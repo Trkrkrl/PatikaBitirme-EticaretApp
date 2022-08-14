@@ -1,13 +1,17 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Business.DependencyResolver.Autofac;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PatikaBitirme_EticaretApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PatikaBitirme_EticaretAPI
+namespace PatikaBitirme_EticaretApp
 {
     public class Program
     {
@@ -15,12 +19,16 @@ namespace PatikaBitirme_EticaretAPI
         {
             CreateHostBuilder(args).Build().Run();
         }
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                     Host.CreateDefaultBuilder(args)
+                     .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                     .ConfigureContainer<ContainerBuilder>(builder =>
+                     {
+                         builder.RegisterModule(new AutofacBusinessModule());
+                     })
+                         .ConfigureWebHostDefaults(webBuilder =>
+                         {
+                             webBuilder.UseStartup<Startup>();
+                         });
     }
 }

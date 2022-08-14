@@ -60,7 +60,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
         }
 
-        
+
 
         [HttpPost("cancel")]
         public IActionResult CancelPurchase(Purchase purchase)

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatikaBitirme-EticaretAPI", "PatikaBitirme-EticaretApp\PatikaBitirme-EticaretAPI.csproj", "{B3FE07CF-19FD-4560-8C14-829931EE5D01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatikaBitirme-EticaretApp", "PatikaBitirme-EticaretApp\PatikaBitirme-EticaretApp.csproj", "{B3FE07CF-19FD-4560-8C14-829931EE5D01}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{90F528DA-0D4D-400F-80A1-7DC41FF1E1A0}"
 EndProject

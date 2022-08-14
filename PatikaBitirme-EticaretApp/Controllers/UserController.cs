@@ -65,7 +65,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         public IActionResult Update(UserPasswordUpdateDto userPasswordUpdateDTO)
         {
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
-            int accountId = Int32.Parse(clm);
+            int accountId = int.Parse(clm);
 
             var result = _userService.UpdatePassword(userPasswordUpdateDTO, accountId);
             if (result.Success)

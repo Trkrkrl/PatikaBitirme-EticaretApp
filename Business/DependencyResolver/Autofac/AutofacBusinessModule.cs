@@ -34,14 +34,16 @@ namespace Business.DependencyResolver.Autofac
             builder.RegisterType<PurchaseManager>().As<IPurchaseService>().SingleInstance();
             builder.RegisterType<EfPurchaseDal>().As<IPurchaseDal>().SingleInstance();
 
+            builder.RegisterType<AddressManager>().As<IAddressService>().SingleInstance();
+            builder.RegisterType<EfAddressDal>().As<IAddressDal>().SingleInstance();
+
+            builder.RegisterType<ColorManager>().As<IColorService>().SingleInstance();
+            builder.RegisterType<EfColorDal>().As<IColorDal>().SingleInstance();
+
+            builder.RegisterType<OfferManager>().As<IOfferService>().SingleInstance();
+            builder.RegisterType<EfOfferDal>().As<IOfferDal>().SingleInstance();
+
            
-
-
-
-
-
-
-
 
 
             builder.RegisterType<AuthManager>().As<IAuthService>();

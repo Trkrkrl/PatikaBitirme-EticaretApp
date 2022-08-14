@@ -81,7 +81,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
-        [HttpGet("getall")]
+        [HttpGet("getofferdetailbyofferid")]
         public IActionResult GetOfferDetailByOfferId(int offerId)
         {
             var result = _offerService.GetByOfferId(offerId);

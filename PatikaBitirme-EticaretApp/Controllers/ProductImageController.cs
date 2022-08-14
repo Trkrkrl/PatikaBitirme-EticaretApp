@@ -16,7 +16,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
             _productImageService = productImageService;
         }
 
-        
+
 
         [HttpPost("add")]
         public IActionResult Add([FromForm(Name = "Image")] IFormFile file, [FromForm] ProductImage productImage)

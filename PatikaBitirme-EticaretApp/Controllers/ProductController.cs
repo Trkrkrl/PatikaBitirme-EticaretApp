@@ -18,7 +18,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            
+
 
             var result = _productService.GetAll();
             if (result.Success)
@@ -53,17 +53,17 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
         }
         //buna gerek varmı- çözüm üretemedim
-       /* [HttpGet("gettheproductsdetail")]
-        public IActionResult GetProductDetails(int productId)
-        {
-            var result = _productService.GetProductDetails(productId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+        /* [HttpGet("gettheproductsdetail")]
+         public IActionResult GetProductDetails(int productId)
+         {
+             var result = _productService.GetProductDetails(productId);
+             if (result.Success)
+             {
+                 return Ok(result);
+             }
 
-            return BadRequest(result);
-        }*/
+             return BadRequest(result);
+         }*/
         [HttpGet("getallproductdetails")]
         public IActionResult GetProductDetails()
         {
