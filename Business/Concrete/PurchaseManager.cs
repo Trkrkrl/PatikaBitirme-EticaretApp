@@ -33,7 +33,9 @@ namespace Business.Concrete
 
         public IResult Add(Purchase purchase)
         {//
-
+            var specimenProductId=purchase.ProductId;
+            var specimen = _productService.GetById(specimenProductId);
+            specimen.Data.IsSold = true;
 
             _purchaseDal.Add(purchase);
             return new SuccessResult(Messages.PurchaseAdded);
@@ -41,6 +43,9 @@ namespace Business.Concrete
 
         public IResult CancelPurchase(Purchase purchase)//delete
         {
+            var specimenProductId = purchase.ProductId;
+            var specimen = _productService.GetById(specimenProductId);
+            specimen.Data.IsSold = false;
             _purchaseDal.Delete(purchase);
             return new SuccessResult(Messages.PurchaseCanceled);
         }
