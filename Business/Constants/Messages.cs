@@ -3,6 +3,7 @@ using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -107,5 +108,7 @@ namespace Business.Constants
         public static string OfferDeclinedBySeller = "Bu  teklif satıcı tarafından reddedildi ";
 
         public static string OtherOffersDeclinedAutomatically = "Diğer müşterilerin teklifleri otomatik olarak reddedildi ";
+
+        public static string AuthorizationDenied = "Buna yetkiniz yok ";
     }
 }
