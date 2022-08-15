@@ -105,5 +105,7 @@ namespace Business.Constants
         public static object NotAllowedToAcceptThisOffer = "Bu  teklifi kabul etmeye yetkiniz yok ";
 
         public static string OfferDeclinedBySeller = "Bu  teklif satıcı tarafından reddedildi ";
+
+        public static string OtherOffersDeclinedAutomatically = "Diğer müşterilerin teklifleri otomatik olarak reddedildi ";
     }
 }

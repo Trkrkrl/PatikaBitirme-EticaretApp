@@ -153,12 +153,28 @@ namespace Business.Concrete
         public IResult AcceptOffer (Offer offer)
         {
             _purchaseService.AddFromOffers(offer);
+            DeclineOtherOffers(offer.ProductId, offer.OfferId);//diğerlerini otomatik oalrak reddet
+
             return new SuccessResult(Messages.OfferAccepted);
         }
         public IResult DeclineOffer(Offer offer)
         { offer.offerStatus = "declined";
             _offerDal.Update(offer);
             return new SuccessResult(Messages.OfferDeclinedBySeller);
+        }
+        public IResult DeclineOtherOffers(int productId,int offerId)//diğer müşterilerin aynı ürüne yaptığı teklif reddedilir
+        {
+           List<Offer> otherOffers= _offerDal.GetAll(o => o.ProductId == productId);
+           var safeOffer= GetByOfferId(offerId).Data;
+            otherOffers.Remove(safeOffer);
+
+            foreach (var of in otherOffers)
+            {
+                of.offerStatus = "declined";
+
+            }
+            return new SuccessResult(Messages.OtherOffersDeclinedAutomatically);
+
         }
 
 
