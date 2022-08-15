@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -44,6 +45,8 @@ namespace Business.Concrete
         }
 
         //bu admin rolü istemeli
+        [SecuredOperation("admin")]
+
         public IDataResult<List<Address>> GetAll()
         {
             return new SuccessDataResult<List<Address>>(_addressDal.GetAll());

@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -141,7 +142,9 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Offer>>(_offerDal.GetAll(o=>o.SenderUserId== customerUserId));
 
         }
-        public IDataResult<List<Offer>> GetAll()//Eğer admin vs varsa tüm teklifleri görmesi için-buna admin attribute gelmeli
+        [SecuredOperation("admin")]
+
+        public IDataResult<List<Offer>> GetAll()
         {
             return new SuccessDataResult<List<Offer>>(_offerDal.GetAll());//girileccek
      
