@@ -73,12 +73,15 @@ namespace Business.Concrete
         {
             var userToCheck = _userService.GetByMail(userMailLoginDto.Email);
 
-            
-            if (userToCheck.Data.Status == "active")
+            if(userToCheck.Data.EndOfSuspension <= DateTime.Now && userToCheck.Data.Status == "suspended")//engel tarihi geçmişse statüyü akctive et ve giriş yap
+            {
+                userToCheck.Data.Status = "active";
+            }
+            if (userToCheck.Data.Status == "active")//giriş yap
             {
                 if (userToCheck.Data == null)
                 {
-                    return new ErrorResult(Messages.UserNotFound);
+                    return new ErrorDataResult<User>(Messages.UserNotFound);
                 }
 
                 if (!HashingHelper.VerifyPasswordHash(userMailLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
@@ -87,10 +90,13 @@ namespace Business.Concrete
                     if (userToCheck.Data.FailedRecentLoginAttempts == 3)
                     {
                         userToCheck.Data.Status = "suspended";
+
+                        userToCheck.Data.FailedRecentLoginAttempts = 0;
+                        userToCheck.Data.EndOfSuspension = DateTime.Now.AddMinutes(10);
                         //send info mail to message service
                     }
 
-                    return new ErrorResult(Messages.PasswordError);
+                    return new ErrorDataResult<User>(Messages.PasswordError);
                 }
 
                 return new SuccessResult(Messages.SuccessfulLogin);
@@ -104,8 +110,12 @@ namespace Business.Concrete
         public IResult LoginWithUserName(UserNameLoginDto userNameLoginDto)
         {
             var userToCheck = _userService.GetByUserName(userNameLoginDto.UserName);
-            
-            if (userToCheck.Data.Status == "active")
+           
+            if (userToCheck.Data.EndOfSuspension <= DateTime.Now&& userToCheck.Data.Status == "suspended")//engel tarihi geçmişse statüyü akctive et ve giriş yap
+            {              
+                userToCheck.Data.Status = "active";
+            }
+            if (userToCheck.Data.Status == "active")//giriş yap
             {
                 if (userToCheck.Data == null)
                 {
@@ -118,6 +128,9 @@ namespace Business.Concrete
                     if (userToCheck.Data.FailedRecentLoginAttempts == 3)
                     {
                         userToCheck.Data.Status = "suspended";
+                       
+                        userToCheck.Data.FailedRecentLoginAttempts = 0;
+                        userToCheck.Data.EndOfSuspension = DateTime.Now.AddMinutes(10);
                         //send info mail to message service
                     }
 
@@ -125,6 +138,7 @@ namespace Business.Concrete
                 }
 
                 return new SuccessResult(Messages.SuccessfulLogin);
+
             }
             return new ErrorResult(Messages.UserSuspended);
 

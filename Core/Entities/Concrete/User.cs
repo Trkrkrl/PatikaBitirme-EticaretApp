@@ -19,5 +19,6 @@ namespace Core.Entities.Concrete
         public byte[] passwordHash { get; set; }
         public string Status { get; set; } = "active";
         public int FailedRecentLoginAttempts { get; set; }
+        public DateTime EndOfSuspension { get; set; } 
     }
 }
