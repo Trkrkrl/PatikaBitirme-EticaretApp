@@ -22,10 +22,10 @@ namespace Business.Concrete
       * kullanıcı profilinde görünmesi için yaptığı ve ona yapılan teklifler-ok
     
         ------
-      * eğer 100 ise offerstatus :accepted olsun=direkt purchase managere gitsin --bunu purchase ten sonra bir düşünecem
+      * eğer 100 ise offerstatus :accepted olsun-ok
      
-      * Bir de satıcı tarafında offer kabul etme durumu olacak
-      * kabul ederse söz konusu offer tamamlanır- => durumu accpeted olur=> purchase managere gitsin - bu ve yukardaki 100 durumlarını bağlayabilrim
+      * Bir de satıcı tarafında offer kabul etme durumu -ok
+      * kabul ederse söz konusu offer tamamlanır- => durumu accpeted olur=> purchase managere gitsin - ok
       * 
       * 
       */
@@ -155,7 +155,11 @@ namespace Business.Concrete
             _purchaseService.AddFromOffers(offer);
             return new SuccessResult(Messages.OfferAccepted);
         }
-
+        public IResult DeclineOffer(Offer offer)
+        { offer.offerStatus = "declined";
+            _offerDal.Update(offer);
+            return new SuccessResult(Messages.OfferDeclinedBySeller);
+        }
 
 
         //

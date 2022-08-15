@@ -151,6 +151,25 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(Messages.NotAllowedToAcceptThisOffer);
         }
+        [Authorize]
+        [HttpPost("declineoffer")]
+        public IActionResult DeclineOffer(Offer offer)
+        {
+
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            if (userId == offer.ReceiverUserId)
+            {
+                var result = _offerService.DeclineOffer(offer);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+
+            }
+            return BadRequest(Messages.NotAllowedToAcceptThisOffer);
+        }
 
 
 
