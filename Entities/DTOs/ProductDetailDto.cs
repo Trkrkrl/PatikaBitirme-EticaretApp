@@ -15,7 +15,7 @@ namespace Entities.DTOs
         public short UnitsInStock { get; set; }
         public decimal UnitPrice { get; set; }
         public string Status { get; set; } = "Sıfır";//kullanılmış, sıfır, az kullanılmış gibi
-        public bool IsOfferable { get; set; }
+        public bool IsOfferable { get; set; }=false;
         public bool IsSold { get; set; }
         //--
         public List<string> ImagePath { get; set; }

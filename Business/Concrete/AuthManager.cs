@@ -1,6 +1,9 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.JWT;
@@ -21,7 +24,7 @@ namespace Business.Concrete
         // login 3 defa başarısız ise mail göndersin
         // register ve login için gerekli karakter sayısı validasyonları ve mesajları
 
-        private IUserService _userService;
+        private readonly IUserService _userService;
         private ITokenHelper _tokenHelper;
         private IUserDal _userDal;
 
@@ -32,9 +35,21 @@ namespace Business.Concrete
             _tokenHelper = tokenHelper;
         }
 
+        [ValidationAspect(typeof(UserResigterValidator))]
 
-        public DataResult<User> Register(UserForRegisterDto userForRegisterDto)
+        public IResult Register(UserForRegisterDto userForRegisterDto)
         {
+           IResult result = BusinessRules.Run(
+               IsUserNameUnique(userForRegisterDto.UserName),
+               IsEmailUnique(userForRegisterDto.Email)
+
+
+                );
+            if (result != null)
+            {
+                return result;
+            }
+
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
             var user = new User//bu account core entitiesteki
@@ -44,42 +59,75 @@ namespace Business.Concrete
                 UserName = userForRegisterDto.UserName,
                 passwordHash = passwordHash,
                 passwordSalt = passwordSalt,
-                Status = true
+                Status = "active"
             };
             _userService.Add(user);
             return new SuccessDataResult<User>(user, Messages.UserRegistered);
         }
 
-        public DataResult<User> LoginWithEmail(UserMailLoginDto userMailLoginDto)
+
+
+        [ValidationAspect(typeof(UserLoginWithMailValidator))]
+
+        public IResult LoginWithEmail(UserMailLoginDto userMailLoginDto)
         {
             var userToCheck = _userService.GetByMail(userMailLoginDto.Email);
-            if (userToCheck.Data == null)
-            {
-                return new ErrorDataResult<User>(Messages.UserNotFound);
-            }
 
-            if (!HashingHelper.VerifyPasswordHash(userMailLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
+            
+            if (userToCheck.Data.Status == "active")
             {
-                return new ErrorDataResult<User>(Messages.PasswordError);
-            }
+                if (userToCheck.Data == null)
+                {
+                    return new ErrorResult(Messages.UserNotFound);
+                }
 
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+                if (!HashingHelper.VerifyPasswordHash(userMailLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
+                {
+                    userToCheck.Data.FailedRecentLoginAttempts += 1;
+                    if (userToCheck.Data.FailedRecentLoginAttempts == 3)
+                    {
+                        userToCheck.Data.Status = "suspended";
+                        //send info mail to message service
+                    }
+
+                    return new ErrorResult(Messages.PasswordError);
+                }
+
+                return new SuccessResult(Messages.SuccessfulLogin);
+
+            }
+            return new ErrorResult(Messages.UserSuspended);
         }
+        
+        [ValidationAspect(typeof(UserLoginWithUserNameValidator))]
 
-        public DataResult<User> LoginWithUserName(UserNameLoginDto userNameLoginDto)
+        public IResult LoginWithUserName(UserNameLoginDto userNameLoginDto)
         {
             var userToCheck = _userService.GetByUserName(userNameLoginDto.UserName);
-            if (userToCheck.Data == null)
+            
+            if (userToCheck.Data.Status == "active")
             {
-                return new ErrorDataResult<User>(Messages.UserNotFound);
-            }
+                if (userToCheck.Data == null)
+                {
+                    return new ErrorDataResult<User>(Messages.UserNotFound);
+                }
 
-            if (!HashingHelper.VerifyPasswordHash(userNameLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
-            {
-                return new ErrorDataResult<User>(Messages.PasswordError);
-            }
+                if (!HashingHelper.VerifyPasswordHash(userNameLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
+                {
+                    userToCheck.Data.FailedRecentLoginAttempts += 1;
+                    if (userToCheck.Data.FailedRecentLoginAttempts == 3)
+                    {
+                        userToCheck.Data.Status = "suspended";
+                        //send info mail to message service
+                    }
 
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+                    return new ErrorDataResult<User>(Messages.PasswordError);
+                }
+
+                return new SuccessResult(Messages.SuccessfulLogin);
+            }
+            return new ErrorResult(Messages.UserSuspended);
+
         }
 
         
@@ -97,6 +145,29 @@ namespace Business.Concrete
         {
             var accessToken = _tokenHelper.CreateToken(user);
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+        }
+        //--
+        private IResult IsEmailUnique(string email)//böyle bir email adresine kayıtlı kullanıcımız var mı?
+        {
+            var result = _userService.GetByMail(email).Success;
+            if (!result)
+            {
+                return new ErrorResult(Messages.EmailOnUse);
+
+            }
+            return new Result(result);
+        }
+        private IResult IsUserNameUnique(string userName)//böyle bir kullanıcı adı ile kayıtlı kullanıcımız var mı?
+        {
+            var result = _userService.GetByUserName(userName).Success;
+            if (!result)
+            {
+                return new ErrorResult(Messages.UserNameExists);
+
+            }
+            return new Result(result);
+
+
         }
     }
 }

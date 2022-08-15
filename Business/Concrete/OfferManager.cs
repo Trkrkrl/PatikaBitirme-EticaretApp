@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -38,7 +40,7 @@ namespace Business.Concrete
         }
         //add(make), delete, update, getall, getsentoffersbyuserid,getreceivedoffersbyuserid,
         //offer detaildtoda gönderen ve alıcı detayını ekledim
-
+        [ValidationAspect(typeof(OfferValidator))]
         public IResult Add (Offer offer)//teklif yap 
         {   
             var isOfferable = _productService.CheckOfferable(offer.ProductId).Success;//resultun succes parçasını alıyoruz-illa başarılı olacak deil
@@ -104,7 +106,7 @@ namespace Business.Concrete
             _offerDal.Delete(offer);
             return new SuccessResult(Messages.OfferDeleted);
         }
-
+        [ValidationAspect(typeof(OfferValidator))]
         public IResult Update(Offer offer)
         {
             var offerId=offer.OfferId;

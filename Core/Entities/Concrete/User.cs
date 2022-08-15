@@ -17,6 +17,7 @@ namespace Core.Entities.Concrete
         public DateTime DateOfBirth { get; set; }
         public byte[] passwordSalt { get; set; }
         public byte[] passwordHash { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; } = "active";
+        public int FailedRecentLoginAttempts { get; set; }
     }
 }

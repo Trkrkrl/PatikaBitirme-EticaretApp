@@ -23,5 +23,7 @@ namespace Business.Abstract
 
         Result Delete(User user);
         Result UpdatePassword(UserPasswordUpdateDto userPasswordUpdateDto, int userId);
+       
+
     }
 }

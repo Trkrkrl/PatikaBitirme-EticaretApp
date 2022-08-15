@@ -58,5 +58,7 @@ namespace Business.Concrete
         {
             throw new NotImplementedException();
         }
+
+       
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,18 +53,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
 
             return BadRequest(result);
         }
-        //buna gerek varmı- çözüm üretemedim
-        /* [HttpGet("gettheproductsdetail")]
-         public IActionResult GetProductDetails(int productId)
-         {
-             var result = _productService.GetProductDetails(productId);
-             if (result.Success)
-             {
-                 return Ok(result);
-             }
-
-             return BadRequest(result);
-         }*/
+        
         [HttpGet("getallproductdetails")]
         public IActionResult GetProductDetails()
         {
@@ -86,6 +76,28 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpPost("delete")]
+        public IActionResult Delete(Product product)
+        {
+            var result = _productService.Delete(product);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpPost("delete")]
+        public IActionResult Update(Product product)
+        {
+            var result = _productService.Delete(product);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         //-
         [HttpGet("getbysellerid")]
         public IActionResult GetBySellerId(int userId)

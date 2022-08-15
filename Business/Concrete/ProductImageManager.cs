@@ -16,7 +16,7 @@ namespace Business.Concrete
 {
     public class ProductImageManager : IProductImageService
     {
-        //burada add- update ve diğer gereken kısımlara ya validator koyacaz- yada kural methoduyla görse boyutunu kontrol ettireccez
+        //burada add- update ve diğer gereken kısımlara ya validator koyacaz- yada kural methoduyla görsel boyutunu kontrol ettireccez
         //yine de ödev dosasını tekrar  oku
         private readonly IProductImageDal _productImageDal;
         private readonly IFileHelper _fileHelper;
@@ -31,7 +31,9 @@ namespace Business.Concrete
         public IResult Add(IFormFile file, ProductImage productImage)
         {
 
-            IResult result = BusinessRules.Run(CheckIfProductImageLimit(productImage.ProductId));//limit kontrolu-asagida yazildi
+            IResult result = BusinessRules.Run(
+                CheckIfProductImageLimit(productImage.ProductId), CheckImageSizeIsAcceptable(file)// görsel sayı ve boyut limitleri
+                );
             if (result != null)
             {
                 return result;
@@ -50,6 +52,13 @@ namespace Business.Concrete
         }
         public IResult Update(IFormFile file, ProductImage productImage)
         {
+            IResult result = BusinessRules.Run(
+               CheckIfProductImageLimit(productImage.ProductId), CheckImageSizeIsAcceptable(file)// görsel sayı ve boyut limitleri
+               );
+            if (result != null)
+            {
+                return result;
+            }
             productImage.ImagePath = _fileHelper.Update(file, PathConstants.ImagesPath + productImage.ImagePath, PathConstants.ImagesPath);
             _productImageDal.Update(productImage);
             return new SuccessResult();
@@ -103,9 +112,16 @@ namespace Business.Concrete
             productImage.Add(new ProductImage { ProductId = productId, Date = DateTime.Now, ImagePath = "DefaultImage.jpg" });
             return new SuccessDataResult<List<ProductImage>>(productImage);
         }
-        private IResult CheckImageSizeIsAcceptable (ProductImage productImage)
+        private IResult CheckImageSizeIsAcceptable (IFormFile file)
         {
-            return null;
+            if (file.Length<=409600)
+            {
+                return new SuccessResult();
+            }
+            else
+            {
+                return new ErrorResult(Messages.ImageSizeIsHigh);
+            }
         }
 
 

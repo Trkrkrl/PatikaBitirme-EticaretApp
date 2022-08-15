@@ -1,5 +1,7 @@
-﻿using Business.Abstract;
+﻿            using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -14,21 +16,11 @@ using System.Threading.Tasks;
 namespace Business.Concrete
 {
     public class ProductManager : IProductService
-    {/*satıcı ürün ekleyebilir
-      * bunun için satıcı mı kontrolü- 
+    {/*
       * 
-      * 
-      * müşteri 
-      *     getall products
-      *     get by category id
-      * get by seller id-bu da satıcı idsine göre
-      * 
+       
       * burada cache aspect ve cacheremove aspectleri eklemeyi unutma
-      *     
-      *          CheckIfProductNameIsValid(product.ProductName),=>bunlari validaton ile yapacağız
-                CheckIfProductDescriptionIsValid(product.Description),
-                CheckIfCategoryEntryIsValid(product.CategoryId), sadece bir tane id bi girildi
-                CheckIfColorEntryIsValid(product.ColorId)
+      
 
         satıştaki ürünlerimi getirmesi için get by seller Id
       *          
@@ -44,7 +36,7 @@ namespace Business.Concrete
             _productDal = productDal;
             _categoryService = categoryService;
         }
-
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(
@@ -78,6 +70,7 @@ namespace Business.Concrete
             _productDal.Delete(product);
             return new Result(true, Messages.ProductDeleted);
         }
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Update(Product product)
         {
             IResult result = BusinessRules.Run(

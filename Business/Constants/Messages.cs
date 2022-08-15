@@ -73,5 +73,13 @@ namespace Business.Constants
         public static string OfferAccepted = "Teklif başarıyla kabul edildi";
 
         public static string OfferAcceptedAndReliedToPurchase = "Teklifiniz tam fiyat üzerinden olduğundan  kabul edildi ve satınalmaya yönlendirildi";
+
+        public static string ImageSizeIsHigh = "Görsel boyutu 400kb 'den düşük olmalıdır.";
+
+        public static string UserNameExists = "Bu kullanıcı adı kullanılmaktadır.";
+
+        public static string EmailOnUse = "Bu email kullanılmaktadır.";
+
+        public static string UserSuspended = "Bu Kullanıcının hesabı askıya alınmıştır .";
     }
 }

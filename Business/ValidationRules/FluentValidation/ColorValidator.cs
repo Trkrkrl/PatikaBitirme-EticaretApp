@@ -8,14 +8,11 @@ using System.Threading.Tasks;
 
 namespace Business.ValidationRules.FluentValidation
 {
-    public class ProductImageValidator :AbstractValidator<ProductImage>
+    public class ColorValidator : AbstractValidator<Color>
     {
-            public ProductImageValidator()
-            {
-            //managerde business rule ile yapıldı
-
-
-            }
-        
+        public ColorValidator()
+        {
+            RuleFor(c=>c.ColorName).NotEmpty().WithMessage(" Renk adı boş bırakılamaz.");
+        }
     }
 }
