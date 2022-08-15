@@ -1,7 +1,10 @@
 ﻿using Business.Abstract;
+using Business.Constants;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace PatikaBitirme_EticaretApp.Controllers
 {
@@ -16,9 +19,15 @@ namespace PatikaBitirme_EticaretApp.Controllers
         {
             _offerService = offerService;
         }
+        [Authorize]
         [HttpPost("makeoffer")]
         public IActionResult MakeOffer(Offer offer)//add
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int senderId = int.Parse(clm);
+
+            offer.SenderUserId = senderId;
+
             var result = _offerService.Add(offer);
             if (result.Success)
             {
@@ -26,9 +35,16 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+
+        [Authorize]
         [HttpPost("canceloffer")]
         public IActionResult CancelOffer(Offer offer)
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int senderId = int.Parse(clm);
+
+            offer.SenderUserId = senderId;
+
             var result = _offerService.Delete(offer);
             if (result.Success)
             {
@@ -36,9 +52,15 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize]
         [HttpPost("updateoffer")]
         public IActionResult Update(Offer offer)
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int senderId = int.Parse(clm);
+
+            offer.SenderUserId = senderId;
+
             var result = _offerService.Update(offer);
             if (result.Success)
             {
@@ -47,29 +69,40 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
         }
 
-
+        [Authorize]
         [HttpGet("getbyofferid")]
         public IActionResult GetByOfferId(int offerId)
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+
+            
+
             var result = _offerService.GetByOfferId(offerId);
-            if (result.Success)
+            if (result.Success&&result.Data.SenderUserId==userId|| result.Success && result.Data.ReceiverUserId == userId)
             {
+                
                 return Ok(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.YouAreNotAllowedToViewThisOffer);
         }
 
+        [Authorize]
         [HttpGet("getsentbycustomerid")]
-        public IActionResult GetReceivedByCustomerId(int customerUserId)
+        public IActionResult GetReceivedByCustomerId()//otomatik claimsten alır
         {
-            var result = _offerService.GetSentByCustomerId(customerUserId);
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            
+
+            var result = _offerService.GetSentByCustomerId(userId);
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
-
+        [Authorize]//admin gerekecek
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
@@ -81,26 +114,42 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
         [HttpGet("getofferdetailbyofferid")]
         public IActionResult GetOfferDetailByOfferId(int offerId)
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+
             var result = _offerService.GetByOfferId(offerId);
-            if (result.Success)
+            if (result.Success && result.Data.SenderUserId == userId || result.Success && result.Data.ReceiverUserId == userId)
             {
+
                 return Ok(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.YouAreNotAllowedToViewThisOfferDetails);
+            
 
         }
+
+        [Authorize]
         [HttpPost("acceptoffer")]
         public IActionResult AcceptOffer(Offer offer)
         {
-            var result = _offerService.AcceptOffer(offer);
-            if (result.Success)
+
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            if (userId==offer.ReceiverUserId)
             {
-                return Ok(result);
+                var result = _offerService.AcceptOffer(offer);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+
             }
-            return BadRequest(result);
+            return BadRequest(Messages.NotAllowedToAcceptThisOffer);
         }
 
 

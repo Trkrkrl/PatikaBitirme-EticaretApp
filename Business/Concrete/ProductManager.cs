@@ -131,6 +131,12 @@ namespace Business.Concrete
             var result = specimen.UnitPrice;
             return  result;
         }
+        public int GetUserIdByProductId(int productId)
+        {
+           var specimen = _productDal.Get(p => p.ProductId == productId);
+            var result = specimen.SellerId;
+            return result;
+        }
 
         //-- kurallar
 

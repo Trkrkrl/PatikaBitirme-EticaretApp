@@ -1,8 +1,11 @@
 ﻿using Business.Abstract;
+using Business.Constants;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace PatikaBitirme_EticaretApp.Controllers
 {
@@ -65,6 +68,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
 
             return BadRequest(result);
         }
+        [Authorize]
 
         [HttpPost("add")]
         public IActionResult Add(Product product)
@@ -76,33 +80,72 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize]
 
         [HttpPost("delete")]
         public IActionResult Delete(Product product)
         {
-            var result = _productService.Delete(product);
-            if (result.Success)
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int sellerId = int.Parse(clm);
+            product.SellerId = sellerId;
+            var productOwnerUserId = _productService.GetUserIdByProductId(product.ProductId);   //bu kişi söz konusu ürünü yükleyen kişi mi
+
+            if (productOwnerUserId == sellerId)
             {
-                return Ok(result);
+
+                var result = _productService.Delete(product);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UnAthorizedProductDeleteAttempt);
+
         }
-        [HttpPost("delete")]
+        [Authorize]
+
+        [HttpPost("update")]
         public IActionResult Update(Product product)
         {
-            var result = _productService.Delete(product);
-            if (result.Success)
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int sellerId = int.Parse(clm);
+            product.SellerId=sellerId;
+            var productOwnerUserId = _productService.GetUserIdByProductId(product.ProductId);   //bu kişi söz konusu ürünü yükleyen kişi mi
+
+            if (productOwnerUserId==sellerId)
             {
-                return Ok(result);
+                var result = _productService.Delete(product);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UnAthorizedProductUpdateAttempt);
+
+
         }
 
         //-
-        [HttpGet("getbysellerid")]
+        [Authorize]
+
+        [HttpGet("getmyproductsonsale")]
+        public IActionResult GetByMyProductsOnSale()//satıcı kendi satmakta olduğu ürünlere erişebilir
+        {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int sellerId = int.Parse(clm);
+            var result = _productService.GetProductsBySellerId(sellerId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+        [HttpGet("getproductsbysellerid")]//giriş yapmamış kullanıcılar belirli bir satıcının sattığı tüm ürünlere erişebilsinler
         public IActionResult GetBySellerId(int userId)
         {
-            //burada userin seller id bilgisine erişmeliyim-burası da authorized olmalı--veya user girer direkt-veya claimsten alırım
             var result = _productService.GetProductsBySellerId(userId);
             if (result.Success)
             {

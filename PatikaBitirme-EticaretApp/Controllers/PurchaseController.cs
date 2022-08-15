@@ -1,7 +1,9 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace PatikaBitirme_EticaretApp.Controllers
 {
@@ -15,7 +17,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         {
             _purchaseService = purchaseService;
         }
-
+        [Authorize]
         [HttpGet("getall")]
         public IActionResult GetAll()//admin tarafından yapılan tüm purchase leri getirir
         {
@@ -26,9 +28,13 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize]
         [HttpGet("getbycustomeruserid")]
-        public IActionResult GetByCustomerId(int userId)//bu user idler claimsten gelecek
+        public IActionResult GetByCustomerId()//bu user idler claimsten gelecek
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+
             var result = _purchaseService.GetByCustomerUserId(userId);
 
             if (result.Success)
@@ -37,6 +43,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize]
         [HttpGet("getbypurchaseid")]
         public IActionResult GetByPurchaseId(int purchaseId)
         {
@@ -49,6 +56,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         }
 
         //post-add,update ,delete
+        [Authorize]
         [HttpPost("Buy")]
         public IActionResult Buy(Purchase purchase)
         {
@@ -61,7 +69,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         }
 
 
-
+        [Authorize]
         [HttpPost("cancel")]
         public IActionResult CancelPurchase(Purchase purchase)
         {

@@ -1,7 +1,10 @@
 ﻿using Business.Abstract;
+using Business.Constants;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace PatikaBitirme_EticaretApp.Controllers
 {
@@ -10,46 +13,74 @@ namespace PatikaBitirme_EticaretApp.Controllers
     public class ProductImageController : ControllerBase
     {
         private readonly IProductImageService _productImageService;
-
-        public ProductImageController(IProductImageService productImageService)
+        private readonly IProductService _productService;
+        public ProductImageController(IProductImageService productImageService,IProductService productService)
         {
             _productImageService = productImageService;
+            _productService = productService;
         }
 
-
-
+        [Authorize]
         [HttpPost("add")]
         public IActionResult Add([FromForm(Name = "Image")] IFormFile file, [FromForm] ProductImage productImage)
         {
-            var result = _productImageService.Add(file, productImage);
-            if (result.Success)
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            productImage.SellerUserId = userId;//şu an giriş yapılı kişinin userid'sini  atadık
+            var productOwnerUserId = _productService.GetUserIdByProductId(productImage.ProductId);   //bu kişi söz konusu ürünü yükleyen kişi mi
+            if (productOwnerUserId==userId)
             {
-                return Ok(result);
+                var result = _productImageService.Add(file, productImage);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UnAthorizedAttempt2);
         }
         //---
+        [Authorize]
         [HttpPost("delete")]
         public IActionResult Delete(ProductImage productImage)
         {
-            var productDeleteImage = _productImageService.GetByProductImageId(productImage.ProductId).Data;
-            var result = _productImageService.Delete(productDeleteImage);
-            if (result.Success)
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            productImage.SellerUserId = userId;//şu an giriş yapılı kişinin userid'sini  atadık
+            var productOwnerUserId = _productService.GetUserIdByProductId(productImage.ProductId);   //bu kişi söz konusu ürünü yükleyen kişi mi
+            if (productOwnerUserId == userId)
             {
-                return Ok(result);
+                var productDeleteImage = _productImageService.GetByProductImageId(productImage.ProductId).Data;
+                var result = _productImageService.Delete(productDeleteImage);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UnAthorizedProductImageDeleteAttempt);
+            
         }
         //--
+        [Authorize]
         [HttpPost("update")]
         public IActionResult Update([FromForm] IFormFile file, [FromForm] ProductImage productImage)
         {
-            var result = _productImageService.Update(file, productImage);
-            if (result.Success)
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            productImage.SellerUserId = userId;//şu an giriş yapılı kişinin userid'sini  atadık
+            var productOwnerUserId = _productService.GetUserIdByProductId(productImage.ProductId);   //bu kişi söz konusu ürünü yükleyen kişi mi
+            if (productOwnerUserId == userId)
             {
-                return Ok(result);
+                var result = _productImageService.Update(file, productImage);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UnAthorizedProductImageUpdateAttempt);
+           
 
         }
 
@@ -66,7 +97,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         }
         //--
         [HttpGet("getbyproductid")]
-        public IActionResult GetByCarId(int productId)
+        public IActionResult GetByProductId(int productId)
         {
             var result = _productImageService.GetByProductId(productId);
             if (result.Success)
@@ -76,6 +107,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return Ok(result);
         }
         //--
+        
         [HttpGet("getbyproductimageid")]
         public IActionResult GetByImageId(int productImageId)
         {

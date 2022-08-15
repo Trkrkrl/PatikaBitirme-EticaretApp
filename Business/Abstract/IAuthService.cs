@@ -12,9 +12,9 @@ namespace Business.Abstract
 {
     public interface IAuthService
     {
-        IResult Register(UserForRegisterDto userForRegisterDto); //Kayıt operasyonu
-        IResult LoginWithEmail(UserMailLoginDto userMailLoginDto);//mail ile Giriş operasyonu
-        IResult LoginWithUserName(UserNameLoginDto userNameLoginDto);//username ile Giriş operasyonu
+        IDataResult<User> Register(UserForRegisterDto userForRegisterDto); //Kayıt operasyonu
+        IDataResult<User> LoginWithEmail(UserMailLoginDto userMailLoginDto);//mail ile Giriş operasyonu
+        IDataResult<User> LoginWithUserName(UserNameLoginDto userNameLoginDto);//username ile Giriş operasyonu
 
 
         Result UserExists(string email);//Kullanıcı var mı

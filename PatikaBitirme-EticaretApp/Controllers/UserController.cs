@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.Constants;
 using Core.Entities.Concrete;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -65,9 +66,9 @@ namespace PatikaBitirme_EticaretApp.Controllers
         public IActionResult Update(UserPasswordUpdateDto userPasswordUpdateDTO)
         {
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
-            int accountId = int.Parse(clm);
+            int userId = int.Parse(clm);
 
-            var result = _userService.UpdatePassword(userPasswordUpdateDTO, accountId);
+            var result = _userService.UpdatePassword(userPasswordUpdateDTO, userId);
             if (result.Success)
             {
                 return Ok(result);
@@ -79,12 +80,19 @@ namespace PatikaBitirme_EticaretApp.Controllers
         [Authorize]
         public IActionResult Delete(User user)
         {
-            var result = _userService.Delete(user);
-            if (result.Success)
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            if (userId==user.UserId)
             {
-                return Ok(result);
+                var result = _userService.Delete(user);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UnAuthorizedDeleteAttempt);
+            
 
         }
     }

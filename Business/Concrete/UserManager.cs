@@ -2,6 +2,7 @@
 using Business.Constants;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using Entities.DTOs;
 using System;
@@ -56,7 +57,23 @@ namespace Business.Concrete
 
         public Result UpdatePassword(UserPasswordUpdateDto userPasswordUpdateDto, int userId)
         {
-            throw new NotImplementedException();
+            var user = (GetById(userId)).Data;
+            if (!HashingHelper.VerifyPasswordHash(userPasswordUpdateDto.OldPassword, user.passwordHash, user.passwordSalt))
+            {
+                return new ErrorResult(Messages.OldPasswordIsWrong);
+
+            }
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(userPasswordUpdateDto.NewPassword, out passwordHash, out passwordSalt);
+
+
+            user.passwordHash = passwordHash;
+            user.passwordSalt = passwordSalt;
+            user.Status = "active";
+            _userDal.Update(user);
+
+
+            return new SuccessDataResult<User>(user, Messages.PasswordUpdated);
         }
 
        

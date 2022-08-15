@@ -37,7 +37,7 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(UserResigterValidator))]
 
-        public IResult Register(UserForRegisterDto userForRegisterDto)
+        public IDataResult<User> Register(UserForRegisterDto userForRegisterDto)
         {
            IResult result = BusinessRules.Run(
                IsUserNameUnique(userForRegisterDto.UserName),
@@ -47,7 +47,7 @@ namespace Business.Concrete
                 );
             if (result != null)
             {
-                return result;
+                return new ErrorDataResult<User>(Messages.CouldNotCreateUser);
             }
 
             byte[] passwordHash, passwordSalt;
@@ -69,7 +69,7 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(UserLoginWithMailValidator))]
 
-        public IResult LoginWithEmail(UserMailLoginDto userMailLoginDto)
+        public IDataResult<User> LoginWithEmail(UserMailLoginDto userMailLoginDto)
         {
             var userToCheck = _userService.GetByMail(userMailLoginDto.Email);
 
@@ -99,15 +99,15 @@ namespace Business.Concrete
                     return new ErrorDataResult<User>(Messages.PasswordError);
                 }
 
-                return new SuccessResult(Messages.SuccessfulLogin);
+                return new SuccessDataResult<User>(Messages.SuccessfulLogin);
 
             }
-            return new ErrorResult(Messages.UserSuspended);
+            return new ErrorDataResult<User> (Messages.UserSuspended);
         }
         
         [ValidationAspect(typeof(UserLoginWithUserNameValidator))]
 
-        public IResult LoginWithUserName(UserNameLoginDto userNameLoginDto)
+        public IDataResult<User> LoginWithUserName(UserNameLoginDto userNameLoginDto)
         {
             var userToCheck = _userService.GetByUserName(userNameLoginDto.UserName);
            
@@ -137,10 +137,10 @@ namespace Business.Concrete
                     return new ErrorDataResult<User>(Messages.PasswordError);
                 }
 
-                return new SuccessResult(Messages.SuccessfulLogin);
+                return new SuccessDataResult<User>(Messages.SuccessfulLogin);
 
             }
-            return new ErrorResult(Messages.UserSuspended);
+            return new ErrorDataResult<User>(Messages.UserSuspended);
 
         }
 

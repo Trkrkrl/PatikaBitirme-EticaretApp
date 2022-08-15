@@ -68,7 +68,7 @@ namespace Core.Utilities.Security.JWT
             claims.AddEmail(user.Email);
             claims.AddName($"{user.UserName}");
 
-            claims.Add(new Claim("AccountId", user.UserId.ToString()));
+            claims.Add(new Claim("UserId", user.UserId.ToString()));
 
 
             return claims;

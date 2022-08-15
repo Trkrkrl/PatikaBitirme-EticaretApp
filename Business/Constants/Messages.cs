@@ -81,5 +81,27 @@ namespace Business.Constants
         public static string EmailOnUse = "Bu email kullanılmaktadır.";
 
         public static string UserSuspended = "Bu Kullanıcının hesabı askıya alınmıştır .";
+
+        public static string CouldNotCreateUser = "Kullanıcı oluşturulamadı .";
+
+        public static string PasswordUpdated = "Şifreniz değiştirldi .";
+
+        public static string OldPasswordIsWrong = "Mevcut şifrenizi yanlış girdiniz.";
+
+        public static object UnAuthorizedDeleteAttempt = "Bu  hesabı silmeye yetkiniz yok";
+
+        public static object UnAthorizedAttempt2 = "Bu  ürüne görsel ekleme yetkiniz  yok ";
+
+        public static object UnAthorizedProductUpdateAttempt = "Bu  ürünü güncelleme yetkiniz yok ";
+        public static object UnAthorizedProductDeleteAttempt = "Bu  ürünü silmeye yetkiniz yok ";
+
+        public static object UnAthorizedProductImageDeleteAttempt = "Bu  ürün görselini silmeye yetkiniz yok ";
+        public static object UnAthorizedProductImageUpdateAttempt = "Bu  ürün görselini güncelleme yetkiniz yok ";
+
+        public static object YouAreNotAllowedToViewThisOffer = "Bu  teklifi görüntüleme yetkiniz yok ";
+
+        public static object YouAreNotAllowedToViewThisOfferDetails = "Bu  teklifin detaylarını görüntüleme yetkiniz yok ";
+
+        public static object NotAllowedToAcceptThisOffer = "Bu  teklifi kabul etmeye yetkiniz yok ";
     }
 }

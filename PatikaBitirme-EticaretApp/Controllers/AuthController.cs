@@ -55,11 +55,7 @@ namespace PatikaBitirme_EticaretApp.Controllers
         public ActionResult Register(UserForRegisterDto userForRegisterDto)
         {
 
-            /* var userExists = _authService.UserExists(accountForRegisterDto.Email);
-         if (!userExists.Success)
-         {
-             return BadRequest(userExists.Message);
-         }*/
+          
 
             var registerResult = _authService.Register(userForRegisterDto);
             var result = _authService.CreateAccessToken(registerResult.Data);

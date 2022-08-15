@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,6 +40,8 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
+
         [HttpPost("Add")]
         public IActionResult Add(Category category)
         {
@@ -51,6 +54,8 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
+
         [HttpPost("Update")]
         public IActionResult Update(Category category)
         {
@@ -63,6 +68,8 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
+
         [HttpPost("Delete")]
         public IActionResult Delete(Category category)
         {
