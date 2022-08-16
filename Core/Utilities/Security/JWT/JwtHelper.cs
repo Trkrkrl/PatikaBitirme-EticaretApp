@@ -29,12 +29,12 @@ namespace Core.Utilities.Security.JWT
         }
 
         // user ile oluşturdğuğumuz claimler lazım
-        public AccessToken CreateToken(User user)
+        public AccessToken CreateToken(User user, List<OperationClaim> operationClaims)
         {
             _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials);
+            var jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials, operationClaims);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
@@ -47,20 +47,20 @@ namespace Core.Utilities.Security.JWT
         }
 
         public JwtSecurityToken CreateJwtSecurityToken(TokenOptions tokenOptions, User user,
-            SigningCredentials signingCredentials)
+            SigningCredentials signingCredentials, List<OperationClaim> operationClaims)
         {
             var jwt = new JwtSecurityToken(
                 issuer: tokenOptions.Issuer,
                 audience: tokenOptions.Audience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
-                claims: SetClaims(user),
+                claims: SetClaims(user, operationClaims),
                 signingCredentials: signingCredentials
             );
             return jwt;
         }
 
-        private IEnumerable<Claim> SetClaims(User user)//system.securtiy.claims ile çöz
+        private IEnumerable<Claim> SetClaims(User user, List<OperationClaim> operationClaims)//system.securtiy.claims ile çöz
         {
             var claims = new List<Claim>();
 
@@ -69,6 +69,7 @@ namespace Core.Utilities.Security.JWT
             claims.AddName($"{user.UserName}");
 
             claims.Add(new Claim("UserId", user.UserId.ToString()));
+            claims.AddRoles(operationClaims.Select(c => c.Name).ToArray());
 
 
             return claims;

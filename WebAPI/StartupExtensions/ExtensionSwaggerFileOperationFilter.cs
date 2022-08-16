@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Linq;
 
-namespace PatikaBitirme_EticaretApp.StartupExtensions
+namespace WebAPI.StartupExtensions
 {
     public class ExtensionSwaggerFileOperationFilter : IOperationFilter
     {

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatikaBitirme-EticaretApp", "PatikaBitirme-EticaretApp\PatikaBitirme-EticaretApp.csproj", "{B3FE07CF-19FD-4560-8C14-829931EE5D01}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{90F528DA-0D4D-400F-80A1-7DC41FF1E1A0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{C4170F46-CA96-4287-BC04-7D562B7F3BA1}"
@@ -13,16 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{1E498D6B-266B-43C4-9AE6-37EB4267C866}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{450986DE-424B-4261-B0F2-07E94FA43AE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B3FE07CF-19FD-4560-8C14-829931EE5D01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3FE07CF-19FD-4560-8C14-829931EE5D01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3FE07CF-19FD-4560-8C14-829931EE5D01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3FE07CF-19FD-4560-8C14-829931EE5D01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{90F528DA-0D4D-400F-80A1-7DC41FF1E1A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{90F528DA-0D4D-400F-80A1-7DC41FF1E1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90F528DA-0D4D-400F-80A1-7DC41FF1E1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{1E498D6B-266B-43C4-9AE6-37EB4267C866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E498D6B-266B-43C4-9AE6-37EB4267C866}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E498D6B-266B-43C4-9AE6-37EB4267C866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{450986DE-424B-4261-B0F2-07E94FA43AE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{450986DE-424B-4261-B0F2-07E94FA43AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{450986DE-424B-4261-B0F2-07E94FA43AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{450986DE-424B-4261-B0F2-07E94FA43AE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

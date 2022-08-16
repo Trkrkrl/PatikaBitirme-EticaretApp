@@ -1,24 +1,25 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace PatikaBitirme_EticaretApp.Controllers
+namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AddressesController : ControllerBase
+    public class CategoryController : ControllerBase
     {
-        private readonly IAddressService _addressService;
+        private readonly ICategoryService _categoryService;
 
-        public AddressesController(IAddressService addressService)
+        public CategoryController(ICategoryService categoryService)
         {
-            _addressService = addressService;
+            _categoryService = categoryService;
         }
         [HttpGet("GetAll")]
         public IActionResult GetAll()
         {
-            var result = _addressService.GetAll();
+            var result = _categoryService.GetAll();
             if (result.Success)
             {
                 return Ok(result.Data); ;
@@ -27,10 +28,10 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetByUserId")]
-        public IActionResult GetById(int userId)
+        [HttpGet("GetById")]
+        public IActionResult GetById(int categoryId)
         {
-            var result = _addressService.GetByUserId(userId);
+            var result = _categoryService.GetById(categoryId);
             if (result.Success)
             {
                 return Ok(result);
@@ -39,10 +40,12 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
+
         [HttpPost("Add")]
-        public IActionResult Add(Address address)
+        public IActionResult Add(Category category)
         {
-            var result = _addressService.Add(address);
+            var result = _categoryService.Add(category);
             if (result.Success)
             {
                 return Ok(result);
@@ -51,10 +54,12 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
+
         [HttpPost("Update")]
-        public IActionResult Update(Address address)
+        public IActionResult Update(Category category)
         {
-            var result = _addressService.Update(address);
+            var result = _categoryService.Update(category);
             if (result.Success)
             {
                 return Ok(result);
@@ -63,10 +68,12 @@ namespace PatikaBitirme_EticaretApp.Controllers
             return BadRequest(result);
 
         }
+        [Authorize]
+
         [HttpPost("Delete")]
-        public IActionResult Delete(Address address)
+        public IActionResult Delete(Category category)
         {
-            var result = _addressService.Delete(address);
+            var result = _categoryService.Delete(category);
             if (result.Success)
             {
                 return Ok(result);

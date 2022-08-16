@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Business.ValidationRules.FluentValidation
@@ -39,18 +40,22 @@ namespace Business.ValidationRules.FluentValidation
             //email geçerli olmalı
             
             RuleFor(c => c.Email).EmailAddress().WithMessage("Geçerli bir Email Adresi giriniz");
-            
+             RuleFor(u=>u.PhoneNumber)
+                .MinimumLength(10).WithMessage("Telefon numaranız en az 10 rakamdan oluşmalıdır.")
+                .MaximumLength(16).WithMessage("Telefon numaranız 16 karakterden uzun olamaz.")
+                .Matches(new Regex(@"((\(\d{3}\) ?)|(\d{3}-))?\d{3}-\d{4}")).WithMessage("Telefon nummaranız geçerli formatta değildir. Uygun Format şu şekildedir: +90 555 123 4567");
+        
 
-            ///
-
-
-
-
-
-
+        ///
 
 
-            RuleFor(c => c.UserName.Length).GreaterThan(5).WithMessage("Kullanıcı adınız 5 karakterden uzun olmalıdır");
+
+
+
+
+
+
+        RuleFor(c => c.UserName.Length).GreaterThan(5).WithMessage("Kullanıcı adınız 5 karakterden uzun olmalıdır");
 
                 
 

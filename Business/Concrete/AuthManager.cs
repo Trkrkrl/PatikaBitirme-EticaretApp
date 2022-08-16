@@ -99,7 +99,7 @@ namespace Business.Concrete
                     return new ErrorDataResult<User>(Messages.PasswordError);
                 }
 
-                return new SuccessDataResult<User>(Messages.SuccessfulLogin);
+                return new SuccessDataResult<User>(userToCheck.Data,Messages.SuccessfulLogin);
 
             }
             return new ErrorDataResult<User> (Messages.UserSuspended);
@@ -137,7 +137,7 @@ namespace Business.Concrete
                     return new ErrorDataResult<User>(Messages.PasswordError);
                 }
 
-                return new SuccessDataResult<User>(Messages.SuccessfulLogin);
+                return new SuccessDataResult<User>(userToCheck.Data,Messages.SuccessfulLogin);
 
             }
             return new ErrorDataResult<User>(Messages.UserSuspended);
@@ -157,7 +157,8 @@ namespace Business.Concrete
         }
         public DataResult<AccessToken> CreateAccessToken(User user)
         {
-            var accessToken = _tokenHelper.CreateToken(user);
+            var claims = _userService.GetClaims(user);
+            var accessToken = _tokenHelper.CreateToken(user,claims.Data);
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
         }
         //--

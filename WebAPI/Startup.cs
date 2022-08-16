@@ -14,13 +14,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PatikaBitirme_EticaretApp.StartupExtensions;
+using WebAPI.StartupExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PatikaBitirme_EticaretApp
+namespace WebAPI
 {
     public class Startup
     {

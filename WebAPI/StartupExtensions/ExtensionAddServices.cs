@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace PatikaBitirme_EticaretApp.StartupExtensions
+namespace WebAPI.StartupExtensions
 {
     public static class ExtensionAddServices
     {

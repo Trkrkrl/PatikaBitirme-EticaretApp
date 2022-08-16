@@ -12,5 +12,24 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfUserDal: EfEntityBaseRepository<User, EfCoreDbContext>, IUserDal
     {
+        public List<OperationClaim> GetClaims(User user)
+        {
+            using (var context = new EfCoreDbContext())
+            {
+                var result = from oclaims in context.OperationClaims
+                             join userOperationClaims in context.UserOperationClaims on oclaims.Id equals userOperationClaims.OperationClaimId
+                             
+
+                             where userOperationClaims.UserId == user.UserId
+
+                             select new OperationClaim
+                             { 
+                                 Id = oclaims.Id, 
+                                 Name = oclaims.Name 
+                             };
+                return result.ToList();
+
+            }
+        }
     }
 }
