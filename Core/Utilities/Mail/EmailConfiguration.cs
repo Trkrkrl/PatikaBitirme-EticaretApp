@@ -15,5 +15,7 @@ namespace Core.Utilities.Mail
         public string SmtpUserName { get; set; }
 
         public string Password { get; set; }
+        public int MyProperty { get; set; }
+        public string DisplayName { get; set; }
     }
 }

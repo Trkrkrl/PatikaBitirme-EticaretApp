@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Utilities.MessageBrokers.RabbitMQ;
+using Core.Utilities.Mail;
 
 namespace WebAPI
 {
@@ -64,6 +65,7 @@ namespace WebAPI
 
           }
           );
+            //-for message broker-rabbit mq
             var serviceClientSettingsConfig = Configuration.GetSection("MessageBrokerOptions");
             var serviceClientSettings = serviceClientSettingsConfig.Get<MessageBrokerOptions>();
             services.Configure<MessageBrokerOptions>(serviceClientSettingsConfig);
@@ -72,6 +74,8 @@ namespace WebAPI
             {
                 services.AddHostedService<MqConsumerHelper>();
             }
+            //-email settings
+            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
 
         }
 

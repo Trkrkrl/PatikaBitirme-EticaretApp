@@ -17,10 +17,11 @@ namespace Core.DependencyResolvers
         {
             serviceCollection.AddMemoryCache();
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            serviceCollection.AddSingleton<IMailService, MailManager>();
+            
             serviceCollection.AddSingleton<IEmailConfiguration, EmailConfiguration>();
             serviceCollection.AddTransient<IMessageBrokerHelper,MqQueueHelper>();
-            
+            serviceCollection.AddTransient<IMailService, MailManager>();
+
 
 
         }

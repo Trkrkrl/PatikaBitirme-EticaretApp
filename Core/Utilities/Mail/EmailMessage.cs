@@ -18,5 +18,7 @@ namespace Core.Utilities.Mail
         public List<EmailAddress> FromAddresses { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
+        public int TryCount { get; set; } = 0;
+        public string Status { get; set; } = "sending";// 5 kez gönderilemzese failed
     }
 }

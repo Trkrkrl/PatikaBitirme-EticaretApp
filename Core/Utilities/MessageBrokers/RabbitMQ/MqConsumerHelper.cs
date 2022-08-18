@@ -24,8 +24,9 @@ namespace Core.Utilities.MessageBrokers.RabbitMQ
         private readonly string _queueName;
         private readonly string _userName;
         private readonly string _password;
+        private readonly IMessageBrokerHelper _messageBrokerHelper;
 
-        public MqConsumerHelper(IConfiguration configuration,IMailService mailService, IOptions<MessageBrokerOptions> rabbitMqOptions)
+        public MqConsumerHelper(IConfiguration configuration,IMailService mailService, IOptions<MessageBrokerOptions> rabbitMqOptions,IMessageBrokerHelper messageBrokerHelper)
         {
             _configuration = configuration;
             _brokerOptions = _configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();//apsettings'ten geliyor
@@ -35,6 +36,7 @@ namespace Core.Utilities.MessageBrokers.RabbitMQ
             _userName = _brokerOptions.UserName;
             _password = _brokerOptions.Password;
             InitializeRabbitMqListener();
+            _messageBrokerHelper= messageBrokerHelper;
 
         }
         private void InitializeRabbitMqListener()
@@ -63,8 +65,8 @@ namespace Core.Utilities.MessageBrokers.RabbitMQ
         {
             stoppingToken.ThrowIfCancellationRequested();
             //var consumer = new EventingBasicConsumer(_channel);
-            GetQueue();
-           // GetEmailQueue();
+           // GetQueue();
+            GetEmailQueue();
             //-
             /*
             consumer.Shutdown += OnConsumerShutdown;
@@ -103,48 +105,61 @@ namespace Core.Utilities.MessageBrokers.RabbitMQ
                 
            }
         
-        public void GetEmailQueue()//yukardakinin email consumer versiyonunu türettim
-        {
-            var factory = new ConnectionFactory()
-            {
-                HostName = _brokerOptions.HostName,
-                UserName = _brokerOptions.UserName,
-                Password = _brokerOptions.Password
-            };
-            using (var connection = factory.CreateConnection())
-            using (var channel = connection.CreateModel())
-            {
-                channel.QueueDeclare(
-                    queue: _queueName,
-                    durable: false,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: null);
+        public Task GetEmailQueue()//yukardakinin email consumer versiyonunu türettim
+        {       
+                var consumer = new EventingBasicConsumer(_channel);
 
-                var consumer = new EventingBasicConsumer(channel);
-
-                consumer.Received += (model, mq) =>
+                consumer.Received += async (model, mq) =>
                 {
                     var body = mq.Body.ToArray();
-                    var json=System.Text.Encoding.UTF8.GetString(body.ToArray());
+                    var json=Encoding.UTF8.GetString(body.ToArray());
                     var email = System.Text.Json.JsonSerializer.Deserialize< EmailMessage > (json);
 
-                    HandleMail(email);
+                   await HandleMail(email);
 
                     _channel.BasicAck(mq.DeliveryTag, false);
                 };
-                
+                consumer.Shutdown += OnConsumerShutdown;
+                consumer.Registered += OnConsumerRegistered;
+                consumer.Unregistered += OnConsumerUnregistered;
+                consumer.ConsumerCancelled += OnConsumerCancelled;
 
-                channel.BasicConsume(
+
+                _channel.BasicConsume(
                     queue: "DArchQueue",
                     autoAck: true,
                     consumer: consumer);
-                Console.ReadKey();
-            }
+
+                return Task.CompletedTask;
+
+            
         }
-        private void HandleMail(EmailMessage email)
+        private async Task HandleMail(EmailMessage email)
         {
-            _mailService.Send(email);//
+            if (email.TryCount<5)
+            {
+                try
+                {
+                    email.TryCount += 1;
+                    email.Status = "sent";
+                    await _mailService.SendEmailAsync(email);//
+
+                }
+                catch (Exception ex)
+                {
+
+                    email.TryCount += 1;//deneme sayısını 1 artır ve tekrar kuyruğa gönder
+                    email.Status = "sending";
+
+                    _messageBrokerHelper.QueueEmail(email);
+                    throw;
+                }
+            }else if (email.TryCount == 5 )
+            {
+                email.Status = "failed";//deneme sayısı 5 olan mail tekrar gelir ve statüsü fail olarak değişir
+            }
+           
+            
         }
 
         private void OnConsumerCancelled(object sender, ConsumerEventArgs e)

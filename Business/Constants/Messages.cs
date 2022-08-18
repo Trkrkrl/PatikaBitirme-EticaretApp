@@ -114,5 +114,7 @@ namespace Business.Constants
         public static string ColorUpdated = "Renk Güncellendi";
 
         public static string ConsumerStarted = "Kuyruk tüketmeye başladı";
+        public static string UserSuspended2 = " Değerli kullanıcı. Şifrenizi 3 kere hatalı girdiğinizden dolayı Hesabınız 10 dk süreyle askıya alınmıştır .";
+
     }
 }

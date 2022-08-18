@@ -20,11 +20,16 @@ namespace Core.Utilities.Mail
             _configuration = configuration;
         }
 
-        public void Send(EmailMessage emailMessage)
+        public async Task SendEmailAsync(EmailMessage emailMessage)
         {
+            emailMessage.FromAddresses.Add(new EmailAddress()//appsettingseten gönderici olan admin mailimizi alır ve gönderenler listesine ekler
+            {
+                Address = _configuration.GetSection("EmailConfiguration").GetSection("Mail").Value,
+                Name = _configuration.GetSection("EmailConfiguration").GetSection("DisplayName").Value
+            });
             var message = new MimeMessage();
             message.To.AddRange(emailMessage.ToAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
-            message.From.AddRange(emailMessage.FromAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
+            message.From.AddRange(emailMessage.FromAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));//bunu yukardan getirir
 
             message.Subject = emailMessage.Subject;
 
@@ -38,10 +43,16 @@ namespace Core.Utilities.Mail
             using (var emailClient = new SmtpClient())
             {
                 emailClient.Connect(
-                    _configuration.GetSection("EmailConfiguration").GetSection("SmtpServer").Value,
-                    Convert.ToInt32(_configuration.GetSection("EmailConfiguration").GetSection("SmtpPort").Value),
-                    SecureSocketOptions.Auto);
-                emailClient.Send(message);
+                    _configuration.GetSection("EmailConfiguration").GetSection("Host").Value,
+                    Convert.ToInt32(_configuration.GetSection("EmailConfiguration").GetSection("Port").Value),
+                    SecureSocketOptions.StartTls
+                    );
+                emailClient.Authenticate(
+                    _configuration.GetSection("EmailConfiguration").GetSection("Mail").Value,
+                    _configuration.GetSection("EmailConfiguration").GetSection("Password").Value
+                    );
+               
+                await emailClient.SendAsync(message);
                 emailClient.Disconnect(true);
             }
         }
