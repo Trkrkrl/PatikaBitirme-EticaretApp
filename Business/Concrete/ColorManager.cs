@@ -3,6 +3,7 @@ using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.MessageBrokers.RabbitMQ;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -17,10 +18,11 @@ namespace Business.Concrete
     public class ColorManager:IColorService
     {
         private readonly IColorDal _colorDal;
-
-        public ColorManager(IColorDal colorDal)
+        private readonly IMessageBrokerHelper _messageBrokerHelper;
+        public ColorManager(IColorDal colorDal, IMessageBrokerHelper messageBrokerHelper)
         {
             _colorDal = colorDal;
+            _messageBrokerHelper = messageBrokerHelper;
         }
 
         [ValidationAspect(typeof(ColorValidator))]
@@ -46,11 +48,14 @@ namespace Business.Concrete
         [ValidationAspect(typeof(ColorValidator))]
         public IResult Update(Color color)
         {
-            throw new NotImplementedException();
+            _colorDal.Update(color);
+            return new Result(true, Messages.ColorUpdated);
         }
 
         public IDataResult<List<Color>> GetAll()
         {
+           _messageBrokerHelper.QueueMessage("rabbit test mesajı");
+
             return new DataResult<List<Color>>(_colorDal.GetAll(), true, Messages.ColorsListed);
         }
 

@@ -110,5 +110,9 @@ namespace Business.Constants
         public static string OtherOffersDeclinedAutomatically = "Diğer müşterilerin teklifleri otomatik olarak reddedildi ";
 
         public static string AuthorizationDenied = "Buna yetkiniz yok ";
+
+        public static string ColorUpdated = "Renk Güncellendi";
+
+        public static string ConsumerStarted = "Kuyruk tüketmeye başladı";
     }
 }

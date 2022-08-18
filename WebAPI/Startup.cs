@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Utilities.MessageBrokers.RabbitMQ;
 
 namespace WebAPI
 {
@@ -63,7 +64,14 @@ namespace WebAPI
 
           }
           );
+            var serviceClientSettingsConfig = Configuration.GetSection("MessageBrokerOptions");
+            var serviceClientSettings = serviceClientSettingsConfig.Get<MessageBrokerOptions>();
+            services.Configure<MessageBrokerOptions>(serviceClientSettingsConfig);
             services.AddCustomizeSwagger();
+            if (serviceClientSettings.Enabled)
+            {
+                services.AddHostedService<MqConsumerHelper>();
+            }
 
         }
 
