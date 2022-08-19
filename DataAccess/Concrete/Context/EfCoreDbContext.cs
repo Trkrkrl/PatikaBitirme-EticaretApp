@@ -55,6 +55,7 @@ namespace DataAccess.Concrete.Context
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
         public DbSet<OperationClaim> OperationClaims { get; set; }
+        public DbSet<Brand> Brands { get; set; }
 
 
 

@@ -20,6 +20,6 @@ namespace Entities.Concrete
         public string Description { get; set; }
         public int ColorId { get; set; }
         public int SellerId { get; set; }
-
+        public int BrandId { get; set; }
     }
 }

@@ -24,5 +24,6 @@ namespace Business.Abstract
         IResult CheckOfferable(int productId);
         double GetProductPriceById(int productId);
         int GetUserIdByProductId(int productId);
+        IDataResult<List<Product>> GetAllByBrandId(int brandId);
     }
 }

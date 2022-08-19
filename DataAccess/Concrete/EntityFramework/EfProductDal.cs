@@ -38,6 +38,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  ColorName=col.ColorName,
                                  SellerId=sel.SellerId,
                                  SellerName=sel.SellerName,
+                                 BrandId=pr.BrandId,
+                                 UnitPrice=pr.UnitPrice,
 
 
 

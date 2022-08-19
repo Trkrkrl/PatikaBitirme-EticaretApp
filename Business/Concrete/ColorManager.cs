@@ -18,11 +18,11 @@ namespace Business.Concrete
     public class ColorManager:IColorService
     {
         private readonly IColorDal _colorDal;
-        private readonly IMessageBrokerHelper _messageBrokerHelper;
-        public ColorManager(IColorDal colorDal, IMessageBrokerHelper messageBrokerHelper)
+       
+        public ColorManager(IColorDal colorDal)
         {
             _colorDal = colorDal;
-            _messageBrokerHelper = messageBrokerHelper;
+            
         }
 
         [ValidationAspect(typeof(ColorValidator))]
@@ -54,7 +54,7 @@ namespace Business.Concrete
 
         public IDataResult<List<Color>> GetAll()
         {
-           _messageBrokerHelper.QueueMessage("rabbit test mesajı");
+           
 
             return new DataResult<List<Color>>(_colorDal.GetAll(), true, Messages.ColorsListed);
         }

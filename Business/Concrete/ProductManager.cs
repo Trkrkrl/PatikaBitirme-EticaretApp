@@ -97,6 +97,10 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == categoryId));
         }
+        public IDataResult<List<Product>> GetAllByBrandId(int brandId)
+        {
+            return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.BrandId == brandId));
+        }
 
         public IDataResult<List<ProductDetailDto>> GetAllProductsDetails()//tüm ürünlerin detaillerini listeler halinde getirir
         {
