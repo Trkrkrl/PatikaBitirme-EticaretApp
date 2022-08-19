@@ -2,7 +2,10 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -23,7 +26,8 @@ namespace Business.Concrete
         {
             _addressDal = addressDal;
         }
-
+        [LogAspect(typeof(FileLogger))]
+        [CacheRemoveAspect("IAddressService.Get")]
         [ValidationAspect(typeof(AddressValidation))]
         public IResult Add(Address address)
         {
@@ -31,6 +35,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.AddressAdded);
         }
 
+        [CacheRemoveAspect("IAddressService.Get")]
+        [LogAspect(typeof(FileLogger))]
 
         [ValidationAspect(typeof(AddressValidation))]
         public IResult Update(Address address)
@@ -38,6 +44,10 @@ namespace Business.Concrete
             _addressDal.Update(address);
             return new SuccessResult(Messages.AddressUpdated);
         }
+
+        [CacheRemoveAspect("IAddressService.Get")]
+        [LogAspect(typeof(FileLogger))]
+
         public IResult Delete(Address address)
         {
             _addressDal.Delete(address);
@@ -46,11 +56,16 @@ namespace Business.Concrete
 
         //bu admin rolü istemeli
         [SecuredOperation("admin")]
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
 
         public IDataResult<List<Address>> GetAll()
         {
             return new SuccessDataResult<List<Address>>(_addressDal.GetAll());
         }
+        [CacheAspect]
+
+        [LogAspect(typeof(FileLogger))]
 
         public IDataResult<Address> GetByUserId(int userId)
         {

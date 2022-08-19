@@ -1,7 +1,10 @@
 ﻿            using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -36,7 +39,10 @@ namespace Business.Concrete
             _productDal = productDal;
             _categoryService = categoryService;
         }
+
         [ValidationAspect(typeof(ProductValidator))]
+        [LogAspect(typeof(FileLogger))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(
@@ -55,6 +61,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded);
         }
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Delete(Product product)
         {
             IResult result = BusinessRules.Run(
@@ -70,7 +78,10 @@ namespace Business.Concrete
             _productDal.Delete(product);
             return new Result(true, Messages.ProductDeleted);
         }
+
         [ValidationAspect(typeof(ProductValidator))]
+        [LogAspect(typeof(FileLogger))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Update(Product product)
         {
             IResult result = BusinessRules.Run(
@@ -88,39 +99,55 @@ namespace Business.Concrete
         }
         //--
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(), Messages.ProductsListed);
         }
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<Product>> GetAllByCategoryId(int categoryId)
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == categoryId));
         }
+
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<Product>> GetAllByBrandId(int brandId)
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.BrandId == brandId));
         }
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<ProductDetailDto>> GetAllProductsDetails()//tüm ürünlerin detaillerini listeler halinde getirir
         {
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetAllProductsDetails());
         }
-        
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
         }
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<Product>> GetByUnitPrice(double min, double max)
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));
         }
+
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<ProductDetailDto>> GetProductsBySellerId(int sellerId)
         {
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductsBySellerId(sellerId));//bu metod şüpheli mutlaka testet
         }
+
         public IResult CheckOfferable(int productId)
         {
             var specimen = _productDal.Get(p => p.ProductId == productId);
@@ -129,12 +156,18 @@ namespace Business.Concrete
 
             return new Result(result);
         }
+
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public double GetProductPriceById(int productId)
         {
             var specimen = _productDal.Get(p => p.ProductId == productId);
             var result = specimen.UnitPrice;
             return  result;
         }
+
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public int GetUserIdByProductId(int productId)
         {
            var specimen = _productDal.Get(p => p.ProductId == productId);
@@ -148,7 +181,7 @@ namespace Business.Concrete
         private IResult CheckIfCategoryIdExist(int categoryId)//Id girdin den böyle bir id varmı
         {
             var result = _productDal.GetAll(p => p.CategoryId== categoryId).Any();
-            if (!result)//girilen category id ye eş bir category id database'de yoksa
+            if (result)//girilen category id ye eş bir category id database'de yoksa
             {
                 return new ErrorResult(Messages.CategoryDoesntExist);
             }//varsa devamet
@@ -158,7 +191,7 @@ namespace Business.Concrete
         private IResult CheckIfColorIdExist(int colorId)//Id girdin den böyle bir id varmı
         {
             var result = _productDal.GetAll(p => p.ColorId== colorId).Any();
-            if (!result)
+            if (result)
             {
                 return new ErrorResult(Messages.ColorDoesntExist);
             }

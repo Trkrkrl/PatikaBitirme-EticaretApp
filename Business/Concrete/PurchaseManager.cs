@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -31,6 +34,8 @@ namespace Business.Concrete
             _addressService = adressService;
         }
 
+        [CacheRemoveAspect("IPurchaseService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult Add(Purchase purchase)
         {//
             var specimenProductId=purchase.ProductId;
@@ -40,7 +45,8 @@ namespace Business.Concrete
             _purchaseDal.Add(purchase);
             return new SuccessResult(Messages.PurchaseAdded);
         }
-
+        [CacheRemoveAspect("IPurchaseService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult CancelPurchase(Purchase purchase)//delete
         {
             var specimenProductId = purchase.ProductId;
@@ -50,21 +56,29 @@ namespace Business.Concrete
             return new SuccessResult(Messages.PurchaseCanceled);
         }
 
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
+
         public DataResult<List<Purchase>> GetAll()
         {
             return new SuccessDataResult<List<Purchase>>(_purchaseDal.GetAll(),Messages.PurchasesListed);
         }
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
 
         public DataResult<List<Purchase>> GetByCustomerUserId(int userId)
         {
             return new SuccessDataResult<List<Purchase>>(_purchaseDal.GetAll(p=>p.UserId==userId), Messages.PurchasesListed2);
 
         }
-
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public DataResult< List<PurchaseDetailDto>> GetByDetailsByPurchaseId(int purchaseId)
         {
             return new SuccessDataResult<List<PurchaseDetailDto>>(_purchaseDal.GetByDetailsByPurchaseId(purchaseId), Messages.PurchasesListed3);
         }
+        [CacheRemoveAspect("IPurchaseService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult AddFromOffers(Offer offer)
         {//
             IDataResult<Address> addressResult = _addressService.GetByUserId(offer.SenderUserId);

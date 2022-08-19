@@ -1,7 +1,9 @@
 ﻿using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
 using Core.Utilities.Mail;
@@ -41,6 +43,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(UserResigterValidator))]
+        [LogAspect(typeof(FileLogger))]
 
         public IDataResult<User> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -91,6 +94,7 @@ namespace Business.Concrete
 
 
         [ValidationAspect(typeof(UserLoginWithMailValidator))]
+        [LogAspect(typeof(FileLogger))]
 
         public IDataResult<User> LoginWithEmail(UserMailLoginDto userMailLoginDto)
         {
@@ -158,6 +162,7 @@ namespace Business.Concrete
         }
         
         [ValidationAspect(typeof(UserLoginWithUserNameValidator))]
+        [LogAspect(typeof(FileLogger))]
 
         public IDataResult<User> LoginWithUserName(UserNameLoginDto userNameLoginDto)
         {

@@ -2,7 +2,10 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -42,6 +45,8 @@ namespace Business.Concrete
         //add(make), delete, update, getall, getsentoffersbyuserid,getreceivedoffersbyuserid,
         //offer detaildtoda gönderen ve alıcı detayını ekledim
         [ValidationAspect(typeof(OfferValidator))]
+        [CacheRemoveAspect("IOfferService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult Add (Offer offer)//teklif yap 
         {   
             var isOfferable = _productService.CheckOfferable(offer.ProductId).Success;//resultun succes parçasını alıyoruz-illa başarılı olacak deil
@@ -89,8 +94,10 @@ namespace Business.Concrete
 
             
         }
-        public IResult Delete(Offer offer)//teklifi geri almak amacıyla gönderen kişi tarafından silinebilmeli
-        {
+            [CacheRemoveAspect("IOfferService.Get")]
+            [LogAspect(typeof(FileLogger))]
+            public IResult Delete(Offer offer)//teklifi geri almak amacıyla gönderen kişi tarafından silinebilmeli
+            {
             var offerId = offer.OfferId;
             
             IResult result = BusinessRules.Run(
@@ -107,6 +114,8 @@ namespace Business.Concrete
             _offerDal.Delete(offer);
             return new SuccessResult(Messages.OfferDeleted);
         }
+        [CacheRemoveAspect("IOfferService.Get")]
+        [LogAspect(typeof(FileLogger))]
         [ValidationAspect(typeof(OfferValidator))]
         public IResult Update(Offer offer)
         {
@@ -127,32 +136,45 @@ namespace Business.Concrete
             return new SuccessResult(Messages.OfferUpdated);
         }
         //--
-
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public IDataResult<Offer> GetByOfferId(int offerId)
         {
 
             return new SuccessDataResult<Offer>(_offerDal.Get(o=>o.OfferId==offerId));
         }
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public IDataResult<List<Offer>> GetReceivedBySellerId(int sellerUserId)//satıcının aldığı teklifler
         {
             return new SuccessDataResult<List<Offer>>(_offerDal.GetAll(o=>o.ReceiverUserId== sellerUserId));
         }
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public IDataResult<List<Offer>> GetSentByCustomerId(int customerUserId)//müşterinin yaptıkları
         {
             return new SuccessDataResult<List<Offer>>(_offerDal.GetAll(o=>o.SenderUserId== customerUserId));
 
         }
-        [SecuredOperation("admin")]
 
+        [SecuredOperation("admin")]
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public IDataResult<List<Offer>> GetAll()
         {
             return new SuccessDataResult<List<Offer>>(_offerDal.GetAll());//girileccek
      
         }
-        public IDataResult<List<OfferDetailDto>> GetOfferDetailsByOfferId(int offerId)
+
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
+   public IDataResult<List<OfferDetailDto>> GetOfferDetailsByOfferId(int offerId)
         {
            return new SuccessDataResult<List<OfferDetailDto>> (_offerDal.GetOfferDetails(offerId));
         }
+
+        [CacheRemoveAspect("IOfferService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult AcceptOffer (Offer offer)
         {
             _purchaseService.AddFromOffers(offer);
@@ -160,11 +182,17 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.OfferAccepted);
         }
+        [CacheRemoveAspect("IOfferService.Get")]
+        [LogAspect(typeof(FileLogger))]
+
         public IResult DeclineOffer(Offer offer)
         { offer.offerStatus = "declined";
             _offerDal.Update(offer);
             return new SuccessResult(Messages.OfferDeclinedBySeller);
         }
+        [CacheRemoveAspect("IOfferService.Get")]
+        [LogAspect(typeof(FileLogger))]
+
         public IResult DeclineOtherOffers(int productId,int offerId)//diğer müşterilerin aynı ürüne yaptığı teklif reddedilir
         {
            List<Offer> otherOffers= _offerDal.GetAll(o => o.ProductId == productId);

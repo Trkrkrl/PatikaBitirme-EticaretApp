@@ -1,4 +1,6 @@
-﻿using Core.Utilities.IoC;
+﻿using Core.CrossCuttingConcerns.Caching;
+using Core.CrossCuttingConcerns.Caching.Microsoft;
+using Core.Utilities.IoC;
 using Core.Utilities.Mail;
 using Core.Utilities.MessageBrokers.RabbitMQ;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +19,7 @@ namespace Core.DependencyResolvers
         {
             serviceCollection.AddMemoryCache();
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+            serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();
             serviceCollection.AddSingleton<IEmailConfiguration, EmailConfiguration>();
             serviceCollection.AddTransient<IMessageBrokerHelper,MqQueueHelper>();
             serviceCollection.AddTransient<IMailService, MailManager>();

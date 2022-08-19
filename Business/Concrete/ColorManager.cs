@@ -2,7 +2,10 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.MessageBrokers.RabbitMQ;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -27,6 +30,9 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(ColorValidator))]
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("IColorService.Get")]
+        [LogAspect(typeof(FileLogger))]
+
 
         public IResult Add(Color color)
         {
@@ -34,6 +40,9 @@ namespace Business.Concrete
             return new SuccessDataResult<Color>(Messages.ColorAdded);
         }
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("IColorService.Get")]
+        [LogAspect(typeof(FileLogger))]
+
 
         public IResult Delete(Color color)
         {
@@ -44,7 +53,8 @@ namespace Business.Concrete
 
 
         [SecuredOperation("admin")]
-
+        [CacheRemoveAspect("IColorService.Get")]
+        [LogAspect(typeof(FileLogger))]
         [ValidationAspect(typeof(ColorValidator))]
         public IResult Update(Color color)
         {
@@ -52,12 +62,17 @@ namespace Business.Concrete
             return new Result(true, Messages.ColorUpdated);
         }
 
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
+
         public IDataResult<List<Color>> GetAll()
         {
            
 
             return new DataResult<List<Color>>(_colorDal.GetAll(), true, Messages.ColorsListed);
         }
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
 
         public IDataResult<Color> GetById(int colorId)
         {

@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.Business;
 using Core.Utilities.Helpers.FileHelper;
 using Core.Utilities.Results;
@@ -27,7 +30,8 @@ namespace Business.Concrete
             _productImageDal = productImageDal;
             _fileHelper = fileHelper;
         }
-
+        [CacheRemoveAspect("IProductImageService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult Add(IFormFile file, ProductImage productImage)
         {
 
@@ -44,12 +48,16 @@ namespace Business.Concrete
             return new SuccessResult("Resim başarıyla yüklendi");
         }
 
+        [CacheRemoveAspect("IProductImageService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult Delete(ProductImage productImage)
         {
             _fileHelper.Delete(PathConstants.ImagesPath + productImage.ImagePath);
             _productImageDal.Delete(productImage);
             return new SuccessResult();
         }
+        [CacheRemoveAspect("IProductImageService.Get")]
+        [LogAspect(typeof(FileLogger))]
         public IResult Update(IFormFile file, ProductImage productImage)
         {
             IResult result = BusinessRules.Run(
@@ -64,11 +72,15 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<ProductImage>> GetAll()
         {
             return new SuccessDataResult<List<ProductImage>>(_productImageDal.GetAll());
         }
 
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
         public IDataResult<List<ProductImage>> GetByProductId(int productId)
         {
             var result = BusinessRules.Run(CheckCarImage(productId));//gorsel var mi kontrolu
@@ -80,6 +92,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductImage>>(_productImageDal.GetAll(p => p.ProductId == productId));
         }
 
+        [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public IDataResult<ProductImage> GetByProductImageId(int productImageId)
         {
             return new SuccessDataResult<ProductImage>(_productImageDal.Get(p => p.ProductImageId == productImageId));
