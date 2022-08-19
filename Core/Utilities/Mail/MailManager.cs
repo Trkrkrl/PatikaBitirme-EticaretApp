@@ -1,4 +1,6 @@
-﻿using MailKit.Net.Smtp;
+﻿using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
@@ -20,6 +22,7 @@ namespace Core.Utilities.Mail
             _configuration = configuration;
         }
 
+        [LogAspect(typeof(FileLogger))]
         public async Task SendEmailAsync(EmailMessage emailMessage)
         {
             emailMessage.FromAddresses.Add(new EmailAddress()//appsettingseten gönderici olan admin mailimizi alır ve gönderenler listesine ekler
