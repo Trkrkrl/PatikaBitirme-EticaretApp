@@ -22,7 +22,7 @@ namespace Business.Concrete
         //burada add- update ve diğer gereken kısımlara ya validator koyacaz- yada kural methoduyla görsel boyutunu kontrol ettireccez
         //yine de ödev dosasını tekrar  oku
         private readonly IProductImageDal _productImageDal;
-        private readonly IFileHelper _fileHelper;
+         IFileHelper _fileHelper;
 
 
         public ProductImageManager(IProductImageDal productImageDal, IFileHelper fileHelper)
@@ -45,17 +45,21 @@ namespace Business.Concrete
             productImage.ImagePath = _fileHelper.Upload(file, PathConstants.ImagesPath);
             productImage.Date = DateTime.Now;
             _productImageDal.Add(productImage);
-            return new SuccessResult("Resim başarıyla yüklendi");
+            return new SuccessResult(Messages.ProductImageAdded);
         }
 
         [CacheRemoveAspect("IProductImageService.Get")]
         [LogAspect(typeof(FileLogger))]
         public IResult Delete(ProductImage productImage)
         {
+           
+            
             _fileHelper.Delete(PathConstants.ImagesPath + productImage.ImagePath);
             _productImageDal.Delete(productImage);
-            return new SuccessResult();
+            return new SuccessResult(Messages.ProductImageDeleted);
         }
+      
+        
         [CacheRemoveAspect("IProductImageService.Get")]
         [LogAspect(typeof(FileLogger))]
         public IResult Update(IFormFile file, ProductImage productImage)
@@ -69,7 +73,7 @@ namespace Business.Concrete
             }
             productImage.ImagePath = _fileHelper.Update(file, PathConstants.ImagesPath + productImage.ImagePath, PathConstants.ImagesPath);
             _productImageDal.Update(productImage);
-            return new SuccessResult();
+            return new SuccessResult(Messages.ProductImageUpdated);
         }
 
         [LogAspect(typeof(FileLogger))]

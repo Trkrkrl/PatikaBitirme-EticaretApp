@@ -33,11 +33,13 @@ namespace Business.Concrete
 
         private readonly IProductDal _productDal;
         private readonly ICategoryService _categoryService;
+        private readonly IProductImageService _productImageService;
 
-        public ProductManager(IProductDal productDal, ICategoryService categoryService)
+        public ProductManager(IProductDal productDal, ICategoryService categoryService, IProductImageService productImageService)
         {
             _productDal = productDal;
             _categoryService = categoryService;
+            _productImageService = productImageService;
         }
 
         [ValidationAspect(typeof(ProductValidator))]
@@ -75,6 +77,7 @@ namespace Business.Concrete
             {
                 return result;
             }
+            
             _productDal.Delete(product);
             return new Result(true, Messages.ProductDeleted);
         }
@@ -124,7 +127,15 @@ namespace Business.Concrete
         [CacheAspect]
         public IDataResult<List<ProductDetailDto>> GetAllProductsDetails()//tüm ürünlerin detaillerini listeler halinde getirir
         {
-            return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetAllProductsDetails());
+            var result = _productDal.GetAllProductsDetails();
+            return new SuccessDataResult<List<ProductDetailDto>>(result);
+        }
+        [LogAspect(typeof(FileLogger))]
+        [CacheAspect]
+        public IDataResult<List<ProductDetailDto>> GetProductDetailsByProductId(int productId)
+        {
+            var result = _productDal.GetAllProductsDetails(P=>P.ProductId==productId);
+            return new SuccessDataResult<List<ProductDetailDto>>(result);
         }
 
         [LogAspect(typeof(FileLogger))]
@@ -143,9 +154,10 @@ namespace Business.Concrete
 
         [LogAspect(typeof(FileLogger))]
         [CacheAspect]
-        public IDataResult<List<ProductDetailDto>> GetProductsBySellerId(int sellerId)
+        public IDataResult<List<Product>> GetProductsBySellerId(int sellerId)
         {
-            return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductsBySellerId(sellerId));//bu metod şüpheli mutlaka testet
+            var result = _productDal.GetAll(p => p.SellerId == sellerId);
+            return new SuccessDataResult<List<Product>>(result);
         }
 
         public IResult CheckOfferable(int productId)
@@ -181,7 +193,7 @@ namespace Business.Concrete
         private IResult CheckIfCategoryIdExist(int categoryId)//Id girdin den böyle bir id varmı
         {
             var result = _productDal.GetAll(p => p.CategoryId== categoryId).Any();
-            if (result)//girilen category id ye eş bir category id database'de yoksa
+            if (!result)//girilen category id ye eş bir category id database'de yoksa
             {
                 return new ErrorResult(Messages.CategoryDoesntExist);
             }//varsa devamet
@@ -191,7 +203,7 @@ namespace Business.Concrete
         private IResult CheckIfColorIdExist(int colorId)//Id girdin den böyle bir id varmı
         {
             var result = _productDal.GetAll(p => p.ColorId== colorId).Any();
-            if (result)
+            if (!result)
             {
                 return new ErrorResult(Messages.ColorDoesntExist);
             }

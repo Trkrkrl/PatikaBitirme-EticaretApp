@@ -21,9 +21,7 @@ namespace Business.Abstract
         IDataResult<List<OfferDetailDto>> GetOfferDetailsByOfferId(int offerId);
         IResult AcceptOffer(Offer offer);
         IResult DeclineOffer(Offer offer);
-
-
-
-
+        
+        
     }
 }

@@ -52,7 +52,7 @@ namespace Business.Concrete
         public IResult Update(Category category)
         {
             _categoryDal.Update(category);
-            return new Result(true);
+            return new Result(true,Messages.CategoryUpdated);
         }
         [CacheAspect]
         [LogAspect(typeof(FileLogger))]
@@ -66,7 +66,7 @@ namespace Business.Concrete
 
         public IDataResult<Category> GetById(int categoryId)
         {
-            return new SuccessDataResult<Category>(_categoryDal.Get(b => b.CategoryId == categoryId));
+            return new SuccessDataResult<Category>(_categoryDal.Get(b => b.CategoryId == categoryId),Messages.CategoriesListed);
         }
 
         

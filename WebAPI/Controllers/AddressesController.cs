@@ -2,6 +2,7 @@
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -30,6 +31,13 @@ namespace WebAPI.Controllers
         [HttpGet("GetByUserId")]
         public IActionResult GetById(int userId)
         {
+            
+            if (userId == 0)
+            {
+                var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+                userId = int.Parse(clm);
+            }
+
             var result = _addressService.GetByUserId(userId);
             if (result.Success)
             {
@@ -42,6 +50,13 @@ namespace WebAPI.Controllers
         [HttpPost("Add")]
         public IActionResult Add(Address address)
         {
+            if (address.UserId==0)
+            {
+                var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+                address.UserId = int.Parse(clm);
+            }
+           
+
             var result = _addressService.Add(address);
             if (result.Success)
             {
@@ -54,6 +69,11 @@ namespace WebAPI.Controllers
         [HttpPost("Update")]
         public IActionResult Update(Address address)
         {
+            if (address.UserId == 0)
+            {
+                var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+                address.UserId = int.Parse(clm);
+            }
             var result = _addressService.Update(address);
             if (result.Success)
             {

@@ -47,13 +47,13 @@ namespace Business.Concrete
 
         public IDataResult<User> Register(UserForRegisterDto userForRegisterDto)
         {
-           IResult result = BusinessRules.Run(
+           IResult result = BusinessRules.Run(//eğer aşağıdaki kurallar success değilse -resulta gelir
                IsUserNameUnique(userForRegisterDto.UserName),
                IsEmailUnique(userForRegisterDto.Email)
 
 
                 );
-            if (result != null)
+            if (result != null)//iş kurallarında kiler success değilse-buraya bişeyler gelir-ozaman da  error döneriz
             {
                 return new ErrorDataResult<User>(Messages.CouldNotCreateUser);
             }
@@ -101,64 +101,74 @@ namespace Business.Concrete
             var userToCheck = _userService.GetByMail(userMailLoginDto.Email);
 
 
-            if (userToCheck.Data == null)
+            IResult result = BusinessRules.Run(UserExists(userMailLoginDto.Email));
+            if (result != null)//iş kurallarında kiler success değilse-buraya bişeyler gelir-ozaman da  error döneriz
             {
-                return new ErrorDataResult<User>(Messages.UserNotFound);
+                return new ErrorDataResult<User>(Messages.CouldNotFindUser2);
             }
-
-            if (userToCheck.Data.EndOfSuspension <= DateTime.Now && userToCheck.Data.Status == "suspended")//engel tarihi geçmişse statüyü akctive et ve giriş yap
+            else
             {
-                userToCheck.Data.Status = "active";
-            }
-            if (userToCheck.Data.Status == "active")//giriş yap
-            {
-
-                if (!HashingHelper.VerifyPasswordHash(userMailLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
+                if (userToCheck.Data == null)
                 {
-                    userToCheck.Data.FailedRecentLoginAttempts += 1;
-
-                    if (userToCheck.Data.FailedRecentLoginAttempts == 3)
-                    {
-                        userToCheck.Data.Status = "suspended";
-
-                        userToCheck.Data.FailedRecentLoginAttempts = 0;
-                        userToCheck.Data.EndOfSuspension = DateTime.Now.AddMinutes(10);
-                        //send info mail to message service
-                        //-burada eposta adresini ve posta adresi listesini oluşturuyoruz
-
-                        EmailAddress emailAddress = new EmailAddress { Address = userMailLoginDto.Email, Name = userToCheck.Data.FirstName };
-                        List<EmailAddress> emailAddresses = new List<EmailAddress>();
-                        emailAddresses.Add(emailAddress);
-                        //-gönderilecek mail  hazırlanıyor
-                        EmailMessage suspendedNotificationMail = new EmailMessage()
-                        {
-                           
-                            Status = "sending",
-                            Content =Messages.UserSuspended2,
-                            ToAddresses= emailAddresses,
-                            Subject = "Account Suspended"
-
-                        };
-                        //buradan da email gönder kuyruğuna ekler
-                        _messageBrokerHelper.QueueEmail(suspendedNotificationMail);
-                    }
-                    _userService.Update(userToCheck.Data);
-                    if(userToCheck.Data.Status == "active")
-                    {
-                        return new ErrorDataResult<User>(Messages.PasswordError);
-
-                    }
-                    else
-                    {
-                        return new ErrorDataResult<User>(Messages.UserSuspended);
-
-                    }
+                    return new ErrorDataResult<User>(Messages.UserNotFound);
                 }
 
-                return new SuccessDataResult<User>(userToCheck.Data,Messages.SuccessfulLogin);
+                if (userToCheck.Data.EndOfSuspension <= DateTime.Now && userToCheck.Data.Status == "suspended")//engel tarihi geçmişse statüyü akctive et ve giriş yap
+                {
+                    userToCheck.Data.Status = "active";
+                }
+                if (userToCheck.Data.Status == "active")//giriş yap
+                {
+
+                    if (!HashingHelper.VerifyPasswordHash(userMailLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
+                    {
+                        userToCheck.Data.FailedRecentLoginAttempts += 1;
+
+                        if (userToCheck.Data.FailedRecentLoginAttempts == 3)
+                        {
+                            userToCheck.Data.Status = "suspended";
+
+                            userToCheck.Data.FailedRecentLoginAttempts = 0;
+                            userToCheck.Data.EndOfSuspension = DateTime.Now.AddMinutes(10);
+                            //send info mail to message service
+                            //-burada eposta adresini ve posta adresi listesini oluşturuyoruz
+
+                            EmailAddress emailAddress = new EmailAddress { Address = userMailLoginDto.Email, Name = userToCheck.Data.FirstName };
+                            List<EmailAddress> emailAddresses = new List<EmailAddress>();
+                            emailAddresses.Add(emailAddress);
+                            //-gönderilecek mail  hazırlanıyor
+                            EmailMessage suspendedNotificationMail = new EmailMessage()
+                            {
+
+                                Status = "sending",
+                                Content = Messages.UserSuspended2,
+                                ToAddresses = emailAddresses,
+                                Subject = "Account Suspended"
+
+                            };
+                            //buradan da email gönder kuyruğuna ekler
+                            _messageBrokerHelper.QueueEmail(suspendedNotificationMail);
+                        }
+                        _userService.Update(userToCheck.Data);
+                        if (userToCheck.Data.Status == "active")
+                        {
+                            return new ErrorDataResult<User>(Messages.PasswordError);
+
+                        }
+                        else
+                        {
+                            return new ErrorDataResult<User>(Messages.UserSuspended);
+
+                        }
+                    }
+
+                    return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+
+                }
+                return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
 
             }
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+            
         }
         
         [ValidationAspect(typeof(UserLoginWithUserNameValidator))]
@@ -167,72 +177,92 @@ namespace Business.Concrete
         public IDataResult<User> LoginWithUserName(UserNameLoginDto userNameLoginDto)
         {
             var userToCheck = _userService.GetByUserName(userNameLoginDto.UserName);
+
+            IResult result = BusinessRules.Run(UserExistsbyUserName(userNameLoginDto.UserName));
+            if (result != null)//iş kurallarında kiler success değilse-buraya bişeyler gelir-ozaman da  error döneriz
+            {
+                return new ErrorDataResult<User>(Messages.CouldNotFindUser);
+            }
+            else
+            {
+                if (userToCheck.Data.EndOfSuspension <= DateTime.Now && userToCheck.Data.Status == "suspended")//engel tarihi geçmişse statüyü akctive et ve giriş yap
+                {
+                    userToCheck.Data.Status = "active";
+                }
+                if (userToCheck.Data.Status == "active")//giriş yap
+                {
+                    if (userToCheck.Data == null)
+                    {
+                        return new ErrorDataResult<User>(Messages.UserNotFound);
+                    }
+
+                    if (!HashingHelper.VerifyPasswordHash(userNameLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
+                    {
+                        userToCheck.Data.FailedRecentLoginAttempts += 1;
+                        if (userToCheck.Data.FailedRecentLoginAttempts == 3)
+                        {
+                            userToCheck.Data.Status = "suspended";
+
+                            userToCheck.Data.FailedRecentLoginAttempts = 0;
+                            userToCheck.Data.EndOfSuspension = DateTime.Now.AddMinutes(10);
+                            //send info mail to message service
+                            //-burada eposta adresini ve posta adresi listesini oluşturuyoruz
+
+                            EmailAddress emailAddress = new EmailAddress { Address = userToCheck.Data.Email, Name = userToCheck.Data.FirstName };
+                            List<EmailAddress> emailAddresses = new List<EmailAddress>();
+                            emailAddresses.Add(emailAddress);
+                            //-gönderilecek mail  hazırlanıyor
+                            EmailMessage suspendedNotificationMail = new EmailMessage()
+                            {
+
+                                Status = "sending",
+                                Content = Messages.UserSuspended2,
+                                ToAddresses = emailAddresses,
+                                Subject = "Account Suspended"
+
+                            };
+                            //buradan da email gönder kuyruğuna ekler
+                            _messageBrokerHelper.QueueEmail(suspendedNotificationMail);
+                        }
+                        _userService.Update(userToCheck.Data);
+                        if (userToCheck.Data.Status == "active")
+                        {
+                            return new ErrorDataResult<User>(Messages.PasswordError);
+
+                        }
+                        else
+                        {
+                            return new ErrorDataResult<User>(Messages.UserSuspended);
+
+                        }
+                    }
+
+                    return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+
+                }
+                return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+            }
+
+            
             
 
-
-            if (userToCheck.Data.EndOfSuspension <= DateTime.Now&& userToCheck.Data.Status == "suspended")//engel tarihi geçmişse statüyü akctive et ve giriş yap
-            {              
-                userToCheck.Data.Status = "active";
-            }
-            if (userToCheck.Data.Status == "active")//giriş yap
-            {
-                if (userToCheck.Data == null)
-                {
-                    return new ErrorDataResult<User>(Messages.UserNotFound);
-                }
-
-                if (!HashingHelper.VerifyPasswordHash(userNameLoginDto.Password, userToCheck.Data.passwordHash, userToCheck.Data.passwordSalt))
-                {
-                    userToCheck.Data.FailedRecentLoginAttempts += 1;
-                    if (userToCheck.Data.FailedRecentLoginAttempts == 3)
-                    {
-                        userToCheck.Data.Status = "suspended";
-                       
-                        userToCheck.Data.FailedRecentLoginAttempts = 0;
-                        userToCheck.Data.EndOfSuspension = DateTime.Now.AddMinutes(10);
-                        //send info mail to message service
-                        //-burada eposta adresini ve posta adresi listesini oluşturuyoruz
-
-                        EmailAddress emailAddress = new EmailAddress { Address = userToCheck.Data.Email, Name = userToCheck.Data.FirstName };
-                        List<EmailAddress> emailAddresses = new List<EmailAddress>();
-                        emailAddresses.Add(emailAddress);
-                        //-gönderilecek mail  hazırlanıyor
-                        EmailMessage suspendedNotificationMail = new EmailMessage()
-                        {
-
-                            Status = "sending",
-                            Content = Messages.UserSuspended2,
-                            ToAddresses = emailAddresses,
-                            Subject="Account Suspended"
-
-                        };
-                        //buradan da email gönder kuyruğuna ekler
-                        _messageBrokerHelper.QueueEmail(suspendedNotificationMail);
-                    }
-                    _userService.Update(userToCheck.Data);
-                    if (userToCheck.Data.Status == "active")
-                    {
-                        return new ErrorDataResult<User>(Messages.PasswordError);
-
-                    }
-                    else
-                    {
-                        return new ErrorDataResult<User>(Messages.UserSuspended);
-
-                    }
-                }
-
-                return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
-
-            }
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+           
         }
 
 
 
-        public Result UserExists(string email)
+        private IResult UserExists(string email)
         {
             var result = _userDal.Any(x => x.Email == email);
+            if (!result)
+            {
+                return new ErrorResult();
+            }
+            return new SuccessResult();
+        }
+        public IResult UserExistsbyUserName(string userName)
+        {
+            var result = _userDal.Any(x => x.UserName == userName);
             if (!result)
             {
                 return new ErrorResult();
@@ -249,22 +279,23 @@ namespace Business.Concrete
         private IResult IsEmailUnique(string email)//böyle bir email adresine kayıtlı kullanıcımız var mı?
         {
             var result = _userService.GetByMail(email).Success;
-            if (!result)
+            if (result)
             {
                 return new ErrorResult(Messages.EmailOnUse);
 
             }
-            return new Result(result);
+            return new Result(false);
         }
         private IResult IsUserNameUnique(string userName)//böyle bir kullanıcı adı ile kayıtlı kullanıcımız var mı?
         {
             var result = _userService.GetByUserName(userName).Success;
-            if (!result)
+            if (result)
             {
                 return new ErrorResult(Messages.UserNameExists);
 
             }
-            return new Result(result);
+            return new Result(false);
+            //ilerleyebilmemiz için bunlar success true olmalı
 
 
         }

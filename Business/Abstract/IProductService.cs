@@ -20,10 +20,11 @@ namespace Business.Abstract
         IResult Add(Product product);
         IResult Delete(Product product);
         IResult Update(Product product);
-        IDataResult<List<ProductDetailDto>> GetProductsBySellerId(int sellerId);
+        IDataResult<List<Product>> GetProductsBySellerId(int sellerId);
         IResult CheckOfferable(int productId);
         double GetProductPriceById(int productId);
         int GetUserIdByProductId(int productId);
         IDataResult<List<Product>> GetAllByBrandId(int brandId);
+        IDataResult<List<ProductDetailDto>> GetProductDetailsByProductId(int productId);
     }
 }

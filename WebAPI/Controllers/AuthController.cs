@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.Constants;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,14 +25,18 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(userToLogin);
             }
-
-            var result = _authService.CreateAccessToken(userToLogin.Data);
-            if (result.Success)
+            else
             {
-                return Ok(result);
+                var result = _authService.CreateAccessToken(userToLogin.Data);
+                if (result.Success)
+                {
+                  return Ok(result);
+                }            
+
+                return BadRequest(result);
             }
 
-            return BadRequest(result);
+            
         }
         [HttpPost("loginwithusername")]
         public ActionResult Login(UserNameLoginDto userNameLoginDto)
@@ -41,14 +46,20 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(userToLogin);
             }
-
-            var result = _authService.CreateAccessToken(userToLogin.Data);
-            if (result.Success)
+            else
             {
-                return Ok(result);
+                var result = _authService.CreateAccessToken(userToLogin.Data);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+
+                  return BadRequest(result);
+
             }
 
-            return BadRequest(result);
+            
+           
         }
 
         [HttpPost("register")]
@@ -58,13 +69,18 @@ namespace WebAPI.Controllers
           
 
             var registerResult = _authService.Register(userForRegisterDto);
-            var result = _authService.CreateAccessToken(registerResult.Data);
-            if (result.Success)
+            if (registerResult.Success)
             {
-                return Ok(result);
+                var result = _authService.CreateAccessToken(registerResult.Data);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
             }
+            
+           
 
-            return BadRequest(result);
+            return BadRequest(Messages.CouldNotCreateUser);
         }
     }
 }

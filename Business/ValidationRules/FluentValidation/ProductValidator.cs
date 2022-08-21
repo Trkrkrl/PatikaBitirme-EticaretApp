@@ -15,7 +15,7 @@ namespace Business.ValidationRules.FluentValidation
         public ProductValidator()
         {
             //Boş bırakılamaz
-            RuleFor(p=>p.ProductName).NotEmpty().WithMessage("Ürün adı  bırakılamaz!");
+            RuleFor(p=>p.ProductName).NotEmpty().WithMessage("Ürün adı boş  bırakılamaz!");
             RuleFor(p => p.Description).NotEmpty().WithMessage("Ürün açıklaması kısmı boş  bırakılamaz!");
             RuleFor(p => p.CategoryId).NotEmpty().WithMessage("Kategori ksımı boş bırakılamaz!");
             RuleFor(p => p.Status).NotEmpty().WithMessage("Ürünün kullanım durumu boş bırakılamaz");

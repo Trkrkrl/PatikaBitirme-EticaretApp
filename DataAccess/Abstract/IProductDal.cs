@@ -4,6 +4,7 @@ using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,8 +12,9 @@ namespace DataAccess.Abstract
 {
     public interface IProductDal:IBaseRepository<Product>
     {
-        List<ProductDetailDto> GetAllProductsDetails();
-        List<ProductDetailDto> GetProductsBySellerId(int sellerId);
+        
+        
+        List<ProductDetailDto> GetAllProductsDetails(Expression<Func<ProductDetailDto, bool>> filter = null);
 
     }
 }

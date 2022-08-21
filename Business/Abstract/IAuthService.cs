@@ -17,7 +17,7 @@ namespace Business.Abstract
         IDataResult<User> LoginWithUserName(UserNameLoginDto userNameLoginDto);//username ile Giriş operasyonu
 
 
-        Result UserExists(string email);//Kullanıcı var mı
+        
         DataResult<AccessToken> CreateAccessToken(User user);
     }
 }

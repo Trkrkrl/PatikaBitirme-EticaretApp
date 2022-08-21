@@ -73,16 +73,18 @@ namespace Business.Concrete
         }
         [CacheAspect]
         [LogAspect(typeof(FileLogger))]
-        public DataResult< List<PurchaseDetailDto>> GetByDetailsByPurchaseId(int purchaseId)
+        public DataResult<Purchase> GetByDetailsByPurchaseId(int purchaseId)
         {
-            return new SuccessDataResult<List<PurchaseDetailDto>>(_purchaseDal.GetByDetailsByPurchaseId(purchaseId), Messages.PurchasesListed3);
+            return new SuccessDataResult<Purchase>(_purchaseDal.Get(p=>p.PurchaseId==purchaseId), Messages.PurchasesListed3);
         }
         [CacheRemoveAspect("IPurchaseService.Get")]
         [LogAspect(typeof(FileLogger))]
         public IResult AddFromOffers(Offer offer)
         {//
-            IDataResult<Address> addressResult = _addressService.GetByUserId(offer.SenderUserId);
+            int userId = offer.SenderUserId;
+            var addressResult = _addressService.GetByUserId(userId);
             int usersFirstAddressId = addressResult.Data.AddressId;
+
 
             Purchase purchase = new Purchase()
             {

@@ -57,10 +57,21 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getallproductdetails")]
+        [HttpGet("getallproductDetails")]
         public IActionResult GetProductDetails()
         {
             var result = _productService.GetAllProductsDetails();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+        [HttpGet("getproductDetailsbyProductId")]
+        public IActionResult GetProductDetails(int productId)
+        {
+            var result = _productService.GetProductDetailsByProductId(productId);
             if (result.Success)
             {
                 return Ok(result);
@@ -88,7 +99,9 @@ namespace WebAPI.Controllers
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
             int sellerId = int.Parse(clm);
             product.SellerId = sellerId;
+            var pId = product.ProductId;
             var productOwnerUserId = _productService.GetUserIdByProductId(product.ProductId);   //bu kişi söz konusu ürünü yükleyen kişi mi
+            product = _productService.GetById(pId).Data;
 
             if (productOwnerUserId == sellerId)
             {
@@ -115,7 +128,7 @@ namespace WebAPI.Controllers
 
             if (productOwnerUserId == sellerId)
             {
-                var result = _productService.Delete(product);
+                var result = _productService.Update(product);
                 if (result.Success)
                 {
                     return Ok(result);
@@ -135,6 +148,7 @@ namespace WebAPI.Controllers
         {
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
             int sellerId = int.Parse(clm);
+
             var result = _productService.GetProductsBySellerId(sellerId);
             if (result.Success)
             {

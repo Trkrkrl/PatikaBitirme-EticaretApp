@@ -13,7 +13,7 @@ namespace Business.Abstract
     {
         IResult CancelPurchase(Purchase purchase);
         IResult Add(Purchase purchase);
-        DataResult<List<PurchaseDetailDto>> GetByDetailsByPurchaseId(int purchaseId);
+        DataResult<Purchase> GetByDetailsByPurchaseId(int purchaseId);
         DataResult<List<Purchase>> GetByCustomerUserId(int userId);
         DataResult<List<Purchase>> GetAll();
         IResult AddFromOffers(Offer offer);

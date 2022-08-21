@@ -7,6 +7,8 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
 using Core.Utilities.Business;
+using Core.Utilities.Mail;
+using Core.Utilities.MessageBrokers.RabbitMQ;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -36,11 +38,15 @@ namespace Business.Concrete
         private readonly IOfferDal _offerDal;
         private readonly IProductService _productService;
         private readonly IPurchaseService _purchaseService;
-        public OfferManager(IOfferDal offerDal,IProductService  productService,IPurchaseService purchaseService)
+        private readonly IUserService _userService;
+        private readonly IMessageBrokerHelper _messageBrokerHelper;
+        public OfferManager(IOfferDal offerDal,IProductService  productService,IPurchaseService purchaseService,IUserService userService,IMessageBrokerHelper messageBrokerHelper)
         {
             _offerDal = offerDal;
             _productService = productService;
             _purchaseService = purchaseService;
+            _userService = userService; 
+            _messageBrokerHelper = messageBrokerHelper;
         }
         //add(make), delete, update, getall, getsentoffersbyuserid,getreceivedoffersbyuserid,
         //offer detaildtoda gönderen ve alıcı detayını ekledim
@@ -51,6 +57,7 @@ namespace Business.Concrete
         {   
             var isOfferable = _productService.CheckOfferable(offer.ProductId).Success;//resultun succes parçasını alıyoruz-illa başarılı olacak deil
             var productId=offer.ProductId;  
+            offer.ReceiverUserId=_productService.GetUserIdByProductId(productId);
             var senderUserId=offer.SenderUserId;
             var productPrice = _productService.GetProductPriceById(productId);
             //-
@@ -80,14 +87,16 @@ namespace Business.Concrete
                 {
                     return result;
                 }
-                if(offer.OfferPercentage == 100)
+                if(offer.OfferPercentage == 100||offer.OfferAmount>=productPrice)
                 {
                 offer.offerStatus = "accepted";
+                Update(offer);
                 _purchaseService.AddFromOffers(offer);
                 return new SuccessResult(Messages.OfferAcceptedAndReliedToPurchase);
                 }
                 else
                 {
+                    offer.offerStatus="pending";
                     _offerDal.Add(offer);
                     return new SuccessResult(Messages.OfferSent);
                 }
@@ -177,9 +186,29 @@ namespace Business.Concrete
         [LogAspect(typeof(FileLogger))]
         public IResult AcceptOffer (Offer offer)
         {
+            offer.offerStatus = "accepted";
+            Update(offer);
             _purchaseService.AddFromOffers(offer);
             DeclineOtherOffers(offer.ProductId, offer.OfferId);//diğerlerini otomatik oalrak reddet
+            //kabul edildi mail gönder
+            var acceptedUser = _userService.GetById(offer.SenderUserId);
 
+            EmailAddress accepteAddress = new EmailAddress { Address = acceptedUser.Data.Email, Name = acceptedUser.Data.FirstName };
+            List<EmailAddress> emailAddresses = new List<EmailAddress>();
+            emailAddresses.Add(accepteAddress);
+            //-gönderilecek mail  hazırlanıyor
+
+            EmailMessage acceptedNotificationMail = new EmailMessage()
+            {
+
+                Status = "sending",
+                Content = Messages.OfferAcceptedMail,
+                ToAddresses = emailAddresses,
+                Subject = "Offer Accepted"
+
+            };
+            //buradan da email gönder kuyruğuna ekler
+            _messageBrokerHelper.QueueEmail(acceptedNotificationMail);
             return new SuccessResult(Messages.OfferAccepted);
         }
         [CacheRemoveAspect("IOfferService.Get")]
@@ -188,6 +217,24 @@ namespace Business.Concrete
         public IResult DeclineOffer(Offer offer)
         { offer.offerStatus = "declined";
             _offerDal.Update(offer);
+
+            List<EmailAddress> emailAddresses = new List<EmailAddress>();
+            var declinedUser = _userService.GetById(offer.SenderUserId);
+            EmailAddress declinedAddress = new EmailAddress { Address = declinedUser.Data.Email, Name = declinedUser.Data.FirstName };
+            emailAddresses.Add(declinedAddress);
+
+            EmailMessage acceptedNotificationMail = new EmailMessage()
+            {
+
+                Status = "sending",
+                Content = Messages.YourOfferDeclined,
+                ToAddresses = emailAddresses,
+                Subject = "Offer Declined"
+
+            };
+            //buradan da email gönder kuyruğuna ekler
+            _messageBrokerHelper.QueueEmail(acceptedNotificationMail);
+
             return new SuccessResult(Messages.OfferDeclinedBySeller);
         }
         [CacheRemoveAspect("IOfferService.Get")]
@@ -196,14 +243,21 @@ namespace Business.Concrete
         public IResult DeclineOtherOffers(int productId,int offerId)//diğer müşterilerin aynı ürüne yaptığı teklif reddedilir
         {
            List<Offer> otherOffers= _offerDal.GetAll(o => o.ProductId == productId);
+
            var safeOffer= GetByOfferId(offerId).Data;
+
             otherOffers.Remove(safeOffer);
+            
 
             foreach (var of in otherOffers)
             {
-                of.offerStatus = "declined";
+                DeclineOffer(of);
 
             }
+
+           
+
+           
             return new SuccessResult(Messages.OtherOffersDeclinedAutomatically);
 
         }
@@ -216,12 +270,12 @@ namespace Business.Concrete
         private IResult CheckIfUserMadeOfferBefore(int senderUserId,int productId)
         {
             var result = _offerDal.GetAll(o => o.SenderUserId==senderUserId && o.ProductId==productId && o.offerStatus=="pending").Any();//bu kişinin-bu ürüne- beklemede olan teklifi varmı
-            if (!result)
+            if (result)
             {
-                return new SuccessResult();
+               return new ErrorResult(Messages.OfferIsPending);
 
             }//varsa devamet
-            return new ErrorResult(Messages.OfferIsPending);
+             return new SuccessResult();
 
         }
         //kural 2: teklif geri alınabilir durumdamı
@@ -229,12 +283,12 @@ namespace Business.Concrete
         {
             //yaptığı teklif kabul edilmiş mi
             var result = _offerDal.GetAll(o => o.OfferId == offerId &&  o.offerStatus == "accepted").Any();
-            if (!result)
+            if (result)
             {
-                return new SuccessResult();
+               return new ErrorResult(Messages.OfferIsAccepted2);
 
             }
-            return new ErrorResult(Messages.OfferIsAccepted2);
+             return new SuccessResult();
 
         }
         //kural 3 - güncellenebilirmi?
@@ -242,12 +296,12 @@ namespace Business.Concrete
         {
             //yaptığı teklif kabul edilmiş mi
             var result = _offerDal.GetAll(o => o.OfferId == offerId && o.offerStatus == "accepted").Any();
-            if (!result)
+            if (result)
             {
-                return new SuccessResult();
+                return new ErrorResult(Messages.OfferIsAccepted3);
 
             }
-            return new ErrorResult(Messages.OfferIsAccepted3);
+            return new SuccessResult();
 
         }
 

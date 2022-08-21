@@ -139,11 +139,14 @@ namespace WebAPI.Controllers
 
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
             int userId = int.Parse(clm);
+            offer.ReceiverUserId = _offerService.GetByOfferId(offer.OfferId).Data.ReceiverUserId;
+            offer.SenderUserId= _offerService.GetByOfferId(offer.OfferId).Data.SenderUserId;
             if (userId==offer.ReceiverUserId)
             {
                 var result = _offerService.AcceptOffer(offer);
                 if (result.Success)
                 {
+
                     return Ok(result);
                 }
                 return BadRequest(result);
@@ -155,9 +158,12 @@ namespace WebAPI.Controllers
         [HttpPost("declineoffer")]
         public IActionResult DeclineOffer(Offer offer)
         {
+            offer.ReceiverUserId = _offerService.GetByOfferId(offer.OfferId).Data.ReceiverUserId;
+            offer.SenderUserId = _offerService.GetByOfferId(offer.OfferId).Data.SenderUserId;
 
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
             int userId = int.Parse(clm);
+
             if (userId == offer.ReceiverUserId)
             {
                 var result = _offerService.DeclineOffer(offer);
@@ -169,6 +175,21 @@ namespace WebAPI.Controllers
 
             }
             return BadRequest(Messages.NotAllowedToAcceptThisOffer);
+        }
+        [Authorize]
+        [HttpGet("getreceievedbyuserId")]
+        public IActionResult GetReceivedByUserId()//otomatik claimsten alır
+        {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+
+
+            var result = _offerService.GetReceivedBySellerId(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
 

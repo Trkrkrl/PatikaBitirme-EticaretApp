@@ -52,13 +52,15 @@ namespace Business.Concrete
         [LogAspect(typeof(FileLogger))]
         public DataResult<User> GetByMail(string email)
         {
-            return new SuccessDataResult<User>(_userDal.GetAll(u => u.Email == email).FirstOrDefault());
+            var result = _userDal.GetAll(u => u.Email == email).FirstOrDefault();
+            return new SuccessDataResult<User>(result);
         }
         [CacheAspect]
         [LogAspect(typeof(FileLogger))]
         public DataResult<User> GetByUserName(string userName)
         {
-            return new SuccessDataResult<User>(_userDal.GetAll(u => u.UserName == userName).FirstOrDefault());
+            var result = _userDal.GetAll(u => u.UserName == userName).FirstOrDefault();
+            return new SuccessDataResult<User>(result);
         }
         [CacheAspect]
         [LogAspect(typeof(FileLogger))]

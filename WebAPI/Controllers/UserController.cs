@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UserNotFountWithMail);
         }
         [HttpGet("getbyusername")]
         [Authorize]
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return BadRequest(Messages.UserNotFountWithUserName);
         }
 
 

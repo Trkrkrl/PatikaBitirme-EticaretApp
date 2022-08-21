@@ -330,24 +330,6 @@ namespace DataAccess.Migrations
 
                     b.ToTable("Purchases");
                 });
-
-            modelBuilder.Entity("Entities.Concrete.Seller", b =>
-                {
-                    b.Property<int>("SellerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("SellerName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("SellerId");
-
-                    b.ToTable("Sellers");
-                });
 #pragma warning restore 612, 618
         }
     }

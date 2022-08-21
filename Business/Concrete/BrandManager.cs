@@ -33,7 +33,7 @@ namespace Business.Concrete
         public IResult Add(Brand brand)
         {
             _brandDal.Add(brand);
-            return new SuccessDataResult<Color>(Messages.ColorAdded);
+            return new SuccessDataResult<Color>(Messages.BrandAdded);
         }
         [CacheRemoveAspect("IBrandService.Get")]
         [LogAspect(typeof(FileLogger))]
@@ -41,7 +41,7 @@ namespace Business.Concrete
         public IResult Delete(Brand brand)
         {
             _brandDal.Delete(brand);
-            return new Result(true, Messages.ColorDeleted);
+            return new Result(true, Messages.BrandDeleted);
         }
         [CacheRemoveAspect("IBrandService.Get")]
         [ValidationAspect(typeof(BrandValidator))]
@@ -50,7 +50,7 @@ namespace Business.Concrete
         public IResult Update(Brand brand)
         {
             _brandDal.Update(brand);
-            return new Result(true, Messages.ColorUpdated);
+            return new Result(true, Messages.BrandUpdated);
         }
 
         [CacheAspect]
@@ -58,7 +58,7 @@ namespace Business.Concrete
 
         public IDataResult<List<Brand>> GetAll()
         {
-            return new DataResult<List<Brand>>(_brandDal.GetAll(), true, Messages.ColorsListed);
+            return new DataResult<List<Brand>>(_brandDal.GetAll(), true, Messages.BrandsListed);
         }
         [CacheAspect]
         [LogAspect(typeof(FileLogger))]

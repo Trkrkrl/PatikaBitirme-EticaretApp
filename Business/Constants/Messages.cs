@@ -83,27 +83,27 @@ namespace Business.Constants
 
         public static string UserSuspended = "Bu Kullanıcının hesabı askıya alınmıştır .";
 
-        public static string CouldNotCreateUser = "Kullanıcı oluşturulamadı .";
+        public static string CouldNotCreateUser = "Kullanıcı oluşturulamadı çünkü E-Posta veya Kulllanıcı Adı Başkası tarafından kullanılmakta .";
 
         public static string PasswordUpdated = "Şifreniz değiştirldi .";
 
         public static string OldPasswordIsWrong = "Mevcut şifrenizi yanlış girdiniz.";
 
-        public static object UnAuthorizedDeleteAttempt = "Bu  hesabı silmeye yetkiniz yok";
+        public static string UnAuthorizedDeleteAttempt = "Bu  hesabı silmeye yetkiniz yok";
 
-        public static object UnAthorizedAttempt2 = "Bu  ürüne görsel ekleme yetkiniz  yok ";
+        public static string UnAthorizedAttempt2 = "Bu  ürüne görsel ekleme yetkiniz  yok ";
 
-        public static object UnAthorizedProductUpdateAttempt = "Bu  ürünü güncelleme yetkiniz yok ";
-        public static object UnAthorizedProductDeleteAttempt = "Bu  ürünü silmeye yetkiniz yok ";
+        public static string UnAthorizedProductUpdateAttempt = "Bu  ürünü güncelleme yetkiniz yok ";
+        public static string UnAthorizedProductDeleteAttempt = "Bu  ürünü silmeye yetkiniz yok ";
 
-        public static object UnAthorizedProductImageDeleteAttempt = "Bu  ürün görselini silmeye yetkiniz yok ";
-        public static object UnAthorizedProductImageUpdateAttempt = "Bu  ürün görselini güncelleme yetkiniz yok ";
+        public static string UnAthorizedProductImageDeleteAttempt = "Bu  ürün görselini silmeye yetkiniz yok ";
+        public static string UnAthorizedProductImageUpdateAttempt = "Bu  ürün görselini güncelleme yetkiniz yok ";
 
-        public static object YouAreNotAllowedToViewThisOffer = "Bu  teklifi görüntüleme yetkiniz yok ";
+        public static string YouAreNotAllowedToViewThisOffer = "Bu  teklifi görüntüleme yetkiniz yok ";
 
-        public static object YouAreNotAllowedToViewThisOfferDetails = "Bu  teklifin detaylarını görüntüleme yetkiniz yok ";
+        public static string YouAreNotAllowedToViewThisOfferDetails = "Bu  teklifin detaylarını görüntüleme yetkiniz yok ";
 
-        public static object NotAllowedToAcceptThisOffer = "Bu  teklifi kabul etmeye yetkiniz yok ";
+        public static string NotAllowedToAcceptThisOffer = "Bu  teklifi kabul etmeye yetkiniz yok ";
 
         public static string OfferDeclinedBySeller = "Bu  teklif satıcı tarafından reddedildi ";
 
@@ -116,5 +116,31 @@ namespace Business.Constants
         public static string ConsumerStarted = "Kuyruk tüketmeye başladı";
         public static string UserSuspended2 = " Değerli kullanıcı. Şifrenizi 3 kere hatalı girdiğinizden dolayı Hesabınız 10 dk süreyle askıya alınmıştır .";
 
+        public static string ProductImageAdded = "Ürün görseli başarıyla  eklendi";
+
+        public static string ProductImageUpdated = "Ürün görseli başarıyla  güncellendi";
+        public static string ProductImageDeleted = "Ürün görseli başarıyla  silindi";
+
+        public static string RegistrationFailed = "Kayıt oluşturma başarısız.";
+
+        public static string ThisEmailIsNotAvailable = "Bu email adresi başka bir kullanıcıya aittir";
+
+        public static string UserNotFountWithMail = "Bu  emaille bir hesap bulunamadı";
+
+        public static string UserNotFountWithUserName = "Bu kullanıcı adıyla bir kullanıcı bulunamadı";
+
+        public static string CouldNotFindUser = "Bu kullanıcı adına  kayıtlı kullanıcı bulunamadı";
+
+        public static string CouldNotFindUser2 = "Bu emaile kayıtlı kulllanıcı bulunamadı";
+
+        public static string BrandAdded = "Marka eklendi";
+        public static string BrandDeleted = "Marka silindi";
+        public static string BrandUpdated = "Marka güncellendi";
+        public static string BrandsListed = "Markalar listelendi";
+
+        public static string CategoryUpdated = "Kategori güncellendi";
+
+        public static string YourOfferDeclined = "Teklifiniz  satıcı tarafından reddedilmiştir";
+        public static string OfferAcceptedMail = "Teklifiniz  satıcı tarafından kabul edilmiştir";
     }
 }

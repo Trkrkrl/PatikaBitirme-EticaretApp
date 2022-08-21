@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Entities.Concrete
 {
     public class Offer : IEntity
     {
+        [Key]
         public int OfferId { get; set; }
         public double OfferPercentage { get; set; } = 0;
         public int OfferAmount { get; set; } = 0;

@@ -63,8 +63,8 @@ namespace WebAPI.Controllers
         }
         //--
         [Authorize]
-        [HttpPost("update")]
-        public IActionResult Update([FromForm] IFormFile file, [FromForm] ProductImage productImage)
+        [HttpPost("update")]//update methodunu test ederken postman'de ProductImage Id girin ki ilgili resmi güncelesin
+        public IActionResult Update([FromForm(Name = "Image")] IFormFile file, [FromForm] ProductImage productImage)
         {
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
             int userId = int.Parse(clm);

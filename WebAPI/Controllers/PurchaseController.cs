@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
         [Authorize]
-        [HttpGet("getbycustomeruserid")]
+        [HttpGet("getMyPurchases")]
         public IActionResult GetByCustomerId()//bu user idler claimsten gelecek
         {
             var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
@@ -60,6 +60,9 @@ namespace WebAPI.Controllers
         [HttpPost("Buy")]
         public IActionResult Buy(Purchase purchase)
         {
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            purchase.UserId= userId;
             var result = _purchaseService.Add(purchase);
             if (result.Success)
             {
@@ -73,6 +76,11 @@ namespace WebAPI.Controllers
         [HttpPost("cancel")]
         public IActionResult CancelPurchase(Purchase purchase)
         {
+            purchase = _purchaseService.GetByDetailsByPurchaseId(purchase.PurchaseId).Data;
+            var clm = (User.Identity as ClaimsIdentity).FindFirst("UserId").Value;
+            int userId = int.Parse(clm);
+            purchase.UserId = userId;
+
             var result = _purchaseService.CancelPurchase(purchase);
             if (result.Success)
             {

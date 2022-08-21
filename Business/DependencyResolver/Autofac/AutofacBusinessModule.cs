@@ -3,6 +3,7 @@ using Autofac.Extras.DynamicProxy;
 using Business.Abstract;
 using Business.Concrete;
 using Castle.DynamicProxy;
+using Core.Utilities.Helpers.FileHelper;
 using Core.Utilities.Interceptors;
 using Core.Utilities.Security.JWT;
 using DataAccess.Abstract;
@@ -43,7 +44,10 @@ namespace Business.DependencyResolver.Autofac
             builder.RegisterType<OfferManager>().As<IOfferService>().SingleInstance();
             builder.RegisterType<EfOfferDal>().As<IOfferDal>().SingleInstance();
 
-           
+            builder.RegisterType<BrandManager>().As<IBrandService>().SingleInstance();
+            builder.RegisterType<EfBrandDal>().As<IBrandDal>().SingleInstance();
+
+            builder.RegisterType<FileHelperManager>().As<IFileHelper>().SingleInstance();
 
 
             builder.RegisterType<AuthManager>().As<IAuthService>();
